@@ -66,7 +66,7 @@ function setPressed(groupId, attr, value) {
 }
 
 function tenure() {
-  return pressedValue("tenure", "tenure", "y1");
+  return pressedValue("tenure", "tenure", null);
 }
 
 function setTenure(value) {
@@ -116,6 +116,7 @@ function calculate() {
   const hours = Math.min(12, Math.max(1, readNumber("hours", 8)));
   const days = Math.min(6, Math.max(1, readNumber("days", 5)));
   const code = tenure();
+  const hasTenure = code !== null;
   const months = Math.min(11, Math.max(0, readNumber("months", 0)));
   const factor = code === "lt1" ? months / 12 : 1;
   const insaforpOn = document.getElementById("insaforp").checked;
@@ -134,7 +135,7 @@ function calculate() {
   const net = money(gross - discounts);
 
   const spec = aguinaldoDays(code);
-  const aguinaldo = money((gross / 30) * spec.days * factor);
+  const aguinaldo = hasTenure ? money((gross / 30) * spec.days * factor) : 0;
   const extraGross = money(gross * extraCount * factor);
   const taxable2026 = money(Math.max(0, aguinaldo - EXEMPT_2026));
   const taxablePermanent = money(Math.max(0, aguinaldo - EXEMPT_PERMANENT));
@@ -143,11 +144,11 @@ function calculate() {
   const aguinaldoNet = money(aguinaldo - rentaAguinaldo2026);
 
   const q25Full = gross <= 1500 ? money(gross * 0.5) : 0;
-  const q25 = money(q25Full * factor);
+  const q25 = hasTenure ? money(q25Full * factor) : 0;
 
   const primaFull = money((gross / 30) * 15 * 0.3);
-  const prima = code === "lt1" ? money(primaFull * factor) : primaFull;
-  const rentaPrima = code === "lt1" ? 0 : extraIsr(taxBase, prima);
+  const prima = !hasTenure ? 0 : code === "lt1" ? money(primaFull * factor) : primaFull;
+  const rentaPrima = hasTenure && code !== "lt1" ? extraIsr(taxBase, prima) : 0;
   const primaNet = money(prima - rentaPrima);
 
   const isssEr = money(Math.min(gross, 1000) * 0.075);
@@ -157,10 +158,10 @@ function calculate() {
   const annualGravable = money(gravable * 12 + taxable2026 + (code === "lt1" ? 0 : prima));
   const annualDeduction = deduction1600 ? 1600 : 0;
   const annualTax = isrAnnual(Math.max(0, annualGravable - annualDeduction));
-  const withheld = money(renta * 12 + rentaAguinaldo2026 + (code === "lt1" ? 0 : rentaPrima));
+  const withheld = money(renta * 12 + rentaAguinaldo2026 + rentaPrima);
 
   return {
-    gross, deposit, hours, days, code, months, factor, insaforpOn, extraCount, sector, floor,
+    gross, deposit, hours, days, code, hasTenure, months, factor, insaforpOn, extraCount, sector, floor,
     isss, afp, gravable, taxBase, renta, discounts, net, deduction1600, annualGross,
     spec, aguinaldo, extraGross, rentaAguinaldo2026, rentaAguinaldoPermanent, aguinaldoNet,
     q25, q25Full, prima, primaFull, rentaPrima, primaNet,
@@ -182,12 +183,15 @@ function render() {
   banner.className = "banner";
 
   const floorBox = document.getElementById("floor");
-  if (!(c.gross > 0)) {
+  const results = document.getElementById("results");
+  results.hidden = !(c.gross > 0);
+  if (!results.hidden) {
+    // el observador de scroll no ve lo que estaba en display:none
+    results.querySelectorAll(".reveal").forEach((node) => node.classList.add("is-in"));
+  }
+  if (results.hidden) {
     title.textContent = "Escribe el salario mensual del contrato.";
-    text.textContent = "Con el bruto mensual se arman ISSS, AFP, renta y el depósito mensual.";
-    document.getElementById("hero-net").textContent = fmt(0);
-    document.getElementById("hero-sub").textContent = "";
-    document.getElementById("reading").textContent = "";
+    text.textContent = "Con el bruto mensual se arman ISSS, AFP, renta y el depósito mensual. El tiempo con este patrono agrega aguinaldo, quincena 25 y vacaciones.";
     floorBox.hidden = true;
     return;
   }
@@ -334,7 +338,15 @@ function render() {
     ? `Todavía no se pagan hasta cumplir el año. Al cumplir el año, la prima extra sería ${fmt(c.primaFull)}. Con ${c.months} meses, lo acumulado ronda ${fmt(c.prima)}. Los 15 días de salario ya van dentro del sueldo del mes en que descansas.`
     : `Los 15 días de descanso ya van dentro de tu sueldo. Esto es solo el 30% extra. En el mes que lo paguen, la renta de ese mes sube cerca de ${fmt(c.rentaPrima)}, así que entrarían unos ${fmt(c.primaNet)}. ${isssVac}`;
 
-  document.getElementById("benefits").innerHTML = `
+  const benefitsBox = document.getElementById("benefits");
+  benefitsBox.classList.toggle("waiting", !c.hasTenure);
+  benefitsBox.innerHTML = !c.hasTenure ? `
+    <article class="benefit lilac">
+      <span class="k">Falta elegir</span>
+      <div class="v">Tiempo con este patrono</div>
+      <p>Aguinaldo, quincena 25 y prima de vacaciones dependen de cuánto llevas en el trabajo. Marca ese tiempo en el panel y aparecen aquí, con sus montos y sus fechas.</p>
+    </article>
+  ` : `
     <article class="benefit rose">
       <span class="k">Aguinaldo</span>
       <div class="v">${fmt(c.aguinaldoNet)}</div>
@@ -357,9 +369,11 @@ function render() {
   const yearTotal = money(yearSalary + c.aguinaldoNet + c.q25 + yearVacation + c.extraGross);
   const yearItems = [
     receiptItem("12 depósitos mensuales", fmt(yearSalary), "El depósito de cada mes, doce veces. No incluye aguinaldo ni quincena 25."),
-    receiptItem("Aguinaldo", fmt(c.aguinaldoNet), "Pago de fin de año, aparte de los 12 depósitos."),
-    receiptItem("Quincena 25", fmt(c.q25), "Pago de enero, aparte del depósito mensual."),
   ];
+  if (c.hasTenure) {
+    yearItems.push(receiptItem("Aguinaldo", fmt(c.aguinaldoNet), "Pago de fin de año, aparte de los 12 depósitos."));
+    yearItems.push(receiptItem("Quincena 25", fmt(c.q25), "Pago de enero, aparte del depósito mensual."));
+  }
   if (c.extraGross > 0) {
     yearItems.push(receiptItem(
       c.extraCount === 1 ? "1 salario extra" : `${c.extraCount} salarios extra`,
@@ -367,7 +381,9 @@ function render() {
       "Prestación del contrato, en bruto. No cambia el depósito mensual. Cada banco decide si ese pago lleva AFP o renta.",
     ));
   }
-  if (c.code === "lt1") {
+  if (!c.hasTenure) {
+    /* sin antigüedad no hay aguinaldo, quincena 25 ni prima que proyectar */
+  } else if (c.code === "lt1") {
     yearItems.push(receiptItem("Prima de vacaciones", fmt(0), `Aún no corresponde. Al cumplir el año serían ${fmt(c.primaFull)} brutos.`));
   } else {
     yearItems.push(receiptItem("Prima de vacaciones", fmt(c.prima), "30% de 15 días."));
@@ -375,7 +391,9 @@ function render() {
   }
   yearItems.push(`<li class="net"><div>Total del año<small>Si lo repartes entre 12 meses, el promedio es ${fmt(yearTotal / 12)}. El depósito mensual sigue siendo ${fmt(c.net)}.</small></div><div>${fmt(yearTotal)}</div></li>`);
   document.getElementById("year").innerHTML = yearItems.join("");
-  document.getElementById("year-note").textContent = c.code === "lt1"
+  document.getElementById("year-note").textContent = !c.hasTenure
+    ? "Solo están los doce depósitos. Elige el tiempo con este patrono y se suman aguinaldo, quincena 25 y prima de vacaciones."
+    : c.code === "lt1"
     ? "El proporcional usa meses ÷ 12. La planilla real cuenta los días hasta el 12 de diciembre, para el aguinaldo, y hasta el pago de enero, para la quincena 25."
     : c.extraGross > 0
       ? "Proyección si el salario se mantiene. Los salarios extra van en bruto: cada banco decide en el contrato si ese pago lleva AFP o renta."
@@ -400,16 +418,21 @@ function render() {
   `;
 
   const erMonth = money(c.isssEr + c.afpEr + c.insaforp);
-  const erYear = money(c.gross * 12 + erMonth * 12 + c.aguinaldo + c.q25 + c.extraGross + (c.code === "lt1" ? c.prima : c.primaFull));
+  const erProvision = !c.hasTenure ? 0 : c.code === "lt1" ? c.prima : c.primaFull;
+  const erYear = money(c.gross * 12 + erMonth * 12 + c.aguinaldo + c.q25 + c.extraGross + erProvision);
   document.getElementById("employer").innerHTML = [
     receiptItem("ISSS patronal, al mes", fmt(c.isssEr), "7.5% con el mismo tope de $1,000. Máximo $75."),
     receiptItem("AFP patronal, al mes", fmt(c.afpEr), "8.75% del salario, sin tope."),
     receiptItem("INSAFORP, al mes", c.insaforpOn ? fmt(c.insaforp) : "$0.00", "1% solo si la empresa tiene 10 personas o más."),
-    receiptItem("Aguinaldo que debe provisionar", fmt(c.aguinaldo), "Lo paga una vez, completo, a ti."),
+    ...(c.hasTenure ? [receiptItem("Aguinaldo que debe provisionar", fmt(c.aguinaldo), "Lo paga una vez, completo, a ti.")] : []),
     ...(c.extraGross > 0 ? [receiptItem("Salarios extra del contrato", fmt(c.extraGross), "Aparte del aguinaldo y de la quincena 25.")] : []),
-    receiptItem("Quincena 25 que debe provisionar", fmt(c.q25), c.gross > 1500 ? "No aplica por el tope de $1,500." : "Completa y sin descuentos, en enero."),
-    receiptItem("Prima vacacional", fmt(c.code === "lt1" ? c.prima : c.primaFull), "30% de 15 días."),
-    receiptItem("Costo aproximado del año", fmt(erYear), "Salario bruto + aportes + prestaciones. Riesgos profesionales van aparte y dependen de la actividad de la empresa.", "net"),
+    ...(c.hasTenure ? [
+      receiptItem("Quincena 25 que debe provisionar", fmt(c.q25), c.gross > 1500 ? "No aplica por el tope de $1,500." : "Completa y sin descuentos, en enero."),
+      receiptItem("Prima vacacional", fmt(c.code === "lt1" ? c.prima : c.primaFull), "30% de 15 días."),
+    ] : []),
+    receiptItem("Costo aproximado del año", fmt(erYear), c.hasTenure
+      ? "Salario bruto + aportes + prestaciones. Riesgos profesionales van aparte y dependen de la actividad de la empresa."
+      : "Salario bruto y aportes patronales. Sin el tiempo con este patrono no se suman aguinaldo, quincena 25 ni prima.", "net"),
   ].join("");
 
   document.getElementById("also").innerHTML = `
@@ -440,15 +463,15 @@ function render() {
 
 function restore(data) {
   if (!data) return;
-  document.getElementById("gross").value = data.gross ?? 1500;
+  document.getElementById("gross").value = data.gross ?? "";
   document.getElementById("deposit").value = data.deposit ?? "";
-  document.getElementById("months").value = data.months ?? 6;
+  document.getElementById("months").value = data.months ?? 0;
   document.getElementById("hours").value = data.hours ?? 8;
   document.getElementById("days").value = data.days ?? 5;
   document.getElementById("insaforp").checked = Boolean(data.insaforp);
   if (data.sector && SECTORS[data.sector]) document.getElementById("sector").value = data.sector;
   document.getElementById("extra").value = data.extra ?? 0;
-  setTenure(data.tenure || "y1");
+  setTenure(data.tenure || null);
 }
 
 document.querySelectorAll("input, select").forEach((input) => input.addEventListener("input", render));

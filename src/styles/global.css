@@ -381,6 +381,9 @@ h2 {
 }
 
 .benefit.rose { background: var(--rose); }
+.benefit.lilac { background: var(--lilac); color: var(--lilac-ink); }
+.benefits.waiting { grid-template-columns: 1fr; }
+.benefits.waiting .benefit { min-height: 0; }
 .benefit.butter { background: var(--butter); }
 .benefit.sky { background: var(--sky); }
 

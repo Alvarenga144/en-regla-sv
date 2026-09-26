@@ -14,7 +14,7 @@ import Base from "../layouts/Base.astro";
     <aside class="card side reveal">
       <label class="field">
         <span>Salario mensual bruto, según contrato</span>
-        <input id="gross" type="number" min="0" step="0.01" value="1500" inputmode="decimal" />
+        <input id="gross" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" />
       </label>
       <label class="field">
         <span>Depósito mensual, opcional</span>
@@ -25,13 +25,13 @@ import Base from "../layouts/Base.astro";
       <p class="block-label">Tiempo con este patrono</p>
       <div class="segments" id="tenure" role="radiogroup" aria-label="Antigüedad">
         <button type="button" data-tenure="lt1" aria-pressed="false">Menos de 1 año</button>
-        <button type="button" data-tenure="y1" aria-pressed="true">1 a menos de 3</button>
+        <button type="button" data-tenure="y1" aria-pressed="false">1 a menos de 3</button>
         <button type="button" data-tenure="y3" aria-pressed="false">3 a menos de 10</button>
         <button type="button" data-tenure="y10" aria-pressed="false">10 años o más</button>
       </div>
       <label class="field" id="months-wrap" hidden style="margin-top:12px">
         <span>Meses cumplidos (para el proporcional)</span>
-        <input id="months" type="number" min="0" max="11" step="1" value="6" />
+        <input id="months" type="number" min="0" max="11" step="1" value="0" />
       </label>
 
       <div class="pair" style="margin-top:14px">
@@ -85,11 +85,12 @@ import Base from "../layouts/Base.astro";
         </div>
       </section>
 
+      <div id="results" hidden>
       <section class="card reveal">
         <div class="hero">
           <div>
             <p class="eyebrow">Depósito mensual de ley</p>
-            <p class="amount" id="hero-net">$1,208.05</p>
+            <p class="amount" id="hero-net">$0.00</p>
             <p class="caption" id="hero-sub"></p>
           </div>
           <div class="pills" id="pills"></div>
@@ -131,6 +132,7 @@ import Base from "../layouts/Base.astro";
           <h2>Qué más existe, y no está en tu depósito</h2>
           <ul class="note-list" id="also"></ul>
         </section>
+      </div>
       </div>
     </main>
   </div>
