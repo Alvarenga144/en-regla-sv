@@ -19,26 +19,17 @@ const year = new Date().getFullYear();
     </div>
     <div>
       <p class="eyebrow">Quién lo hizo</p>
-      <p class="foot-name">{site.author}</p>
+      <p class="foot-name">
+        <a href={site.url} target="_blank" rel="noopener noreferrer">{site.author}</a>
+      </p>
       <p class="foot-note">
         Proyecto personal y sin fines de lucro. No vende nada, no cobra por orientar y no representa a
         ninguna institución.
       </p>
-      <div class="socials">
-        <a href={site.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub de Esteban Alvarenga">
-          <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-            <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z" />
-          </svg>
-          <span>GitHub</span>
-        </a>
-        <a href={site.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn de Esteban Alvarenga">
-          <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-            <path fill="currentColor" d="M3.58 1.44a1.72 1.72 0 1 1 0 3.44 1.72 1.72 0 0 1 0-3.44ZM2.1 6.1h2.96v7.9H2.1V6.1Zm4.82 0h2.84v1.08h.04c.4-.72 1.36-1.48 2.8-1.48 3 0 3.4 1.86 3.4 4.28V14h-2.96v-3.58c0-.86-.02-1.96-1.24-1.96-1.24 0-1.44.93-1.44 1.9V14H6.92V6.1Z" />
-          </svg>
-          <span>LinkedIn</span>
-        </a>
-      </div>
+      <a class="site-chip" href={site.url} target="_blank" rel="noopener noreferrer">
+        estebanalvarenga.com
+      </a>
     </div>
   </div>
-  <p class="foot-legal">© {year} {site.author}. Hecho en El Salvador, para quien empieza.</p>
+  <p class="foot-legal">© {year} <a href={site.url} target="_blank" rel="noopener noreferrer">{site.author}</a>. Hecho en El Salvador, para quien empieza.</p>
 </footer>

@@ -2,8 +2,7 @@ export const site = {
   name: "En regla",
   tagline: "Empezar a trabajar en El Salvador, sin perderse en el camino.",
   author: "Esteban Alvarenga",
-  github: "https://github.com/estebanalvarenga",
-  linkedin: "https://www.linkedin.com/in/estebanalvarenga",
+  url: "https://estebanalvarenga.com",
 };
 
 export const nav = [
