@@ -408,6 +408,31 @@ h2 {
 .note-list { margin: 0; padding-left: 18px; line-height: 1.5; }
 .note-list li { margin: 8px 0; }
 
+.terms {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 24px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.terms li { margin: 0; line-height: 1.45; }
+
+.terms b {
+  display: block;
+  margin-bottom: 4px;
+  font-family: Fraunces, Georgia, serif;
+  font-size: 1.08rem;
+  font-weight: 560;
+  letter-spacing: -0.02em;
+}
+
+.terms span {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
 .employer {
   background: linear-gradient(180deg, rgba(215, 234, 220, 0.55), rgba(255, 250, 246, 0.9));
 }
@@ -636,7 +661,7 @@ footer.sources {
 }
 
 @media (max-width: 980px) {
-  .layout, .benefits, .two, .foot-main { grid-template-columns: 1fr; }
+  .layout, .benefits, .two, .foot-main, .terms { grid-template-columns: 1fr; }
   .side { position: static; }
   .periods { grid-template-columns: 1fr 1fr; }
   .step { grid-template-columns: auto 1fr; }

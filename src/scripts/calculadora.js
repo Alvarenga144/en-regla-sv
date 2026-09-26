@@ -191,8 +191,8 @@ function render() {
     results.querySelectorAll(".reveal").forEach((node) => node.classList.add("is-in"));
   }
   if (results.hidden) {
-    title.textContent = "Escribe el salario mensual del contrato.";
-    text.textContent = "Con el bruto mensual se arman ISSS, AFP, renta y el depósito mensual. El tiempo con este patrono agrega aguinaldo, quincena 25 y vacaciones.";
+    title.textContent = "Escribe el salario del contrato.";
+    text.textContent = "El bruto es esa cifra, antes de ISSS, AFP y renta. Con eso se arma el depósito del mes. El tiempo en este trabajo agrega aguinaldo, quincena 25 y vacaciones.";
     floorBox.hidden = true;
     return;
   }
@@ -344,8 +344,8 @@ function render() {
   benefitsBox.innerHTML = !c.hasTenure ? `
     <article class="benefit lilac">
       <span class="k">Falta elegir</span>
-      <div class="v">Tiempo con este patrono</div>
-      <p>Aguinaldo, quincena 25 y prima de vacaciones dependen de cuánto llevas en el trabajo. Marca ese tiempo en el panel y aparecen aquí, con sus montos y sus fechas.</p>
+      <div class="v">Tiempo en este trabajo</div>
+      <p>Aguinaldo, quincena 25 y prima de vacaciones dependen de cuánto llevas. Márcalo en el panel y aparecen aquí, con sus montos y sus fechas.</p>
     </article>
   ` : `
     <article class="benefit rose">
@@ -393,7 +393,7 @@ function render() {
   yearItems.push(`<li class="net"><div>Total del año<small>Si lo repartes entre 12 meses, el promedio es ${fmt(yearTotal / 12)}. El depósito mensual sigue siendo ${fmt(c.net)}.</small></div><div>${fmt(yearTotal)}</div></li>`);
   document.getElementById("year").innerHTML = yearItems.join("");
   document.getElementById("year-note").textContent = !c.hasTenure
-    ? "Solo están los doce depósitos. Elige el tiempo con este patrono y se suman aguinaldo, quincena 25 y prima de vacaciones."
+    ? "Solo están los doce depósitos. Elige el tiempo en este trabajo y se suman aguinaldo, quincena 25 y prima de vacaciones."
     : c.code === "lt1"
     ? "El proporcional usa meses ÷ 12. La planilla real cuenta los días hasta el 12 de diciembre, para el aguinaldo, y hasta el pago de enero, para la quincena 25."
     : c.extraGross > 0
@@ -433,7 +433,7 @@ function render() {
     ] : []),
     receiptItem("Costo aproximado del año", fmt(erYear), c.hasTenure
       ? "Salario bruto + aportes + prestaciones. Riesgos profesionales van aparte y dependen de la actividad de la empresa."
-      : "Salario bruto y aportes patronales. Sin el tiempo con este patrono no se suman aguinaldo, quincena 25 ni prima.", "net"),
+      : "Salario bruto y aportes patronales. Sin el tiempo en este trabajo no se suman aguinaldo, quincena 25 ni prima.", "net"),
   ].join("");
 
   document.getElementById("also").innerHTML = `

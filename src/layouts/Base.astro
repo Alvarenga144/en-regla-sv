@@ -6,7 +6,7 @@ import "../styles/global.css";
 
 const { title, description, eyebrow, heading, lede, sources } = Astro.props;
 const path = Astro.url.pathname;
-const reading = ["/isss/", "/afp/", "/banco/", "/renta/"].includes(path);
+const reading = ["/contrato/", "/isss/", "/afp/", "/banco/", "/renta/"].includes(path);
 const canonical = new URL(path, Astro.site);
 ---
 

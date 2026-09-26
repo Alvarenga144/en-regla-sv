@@ -7,6 +7,7 @@ export const site = {
 
 export const nav = [
   { href: "/", label: "Inicio" },
+  { href: "/contrato/", label: "Contrato" },
   { href: "/isss/", label: "Seguro social" },
   { href: "/afp/", label: "AFP" },
   { href: "/banco/", label: "Cuenta de banco" },

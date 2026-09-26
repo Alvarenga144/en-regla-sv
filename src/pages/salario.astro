@@ -7,28 +7,30 @@ import Base from "../layouts/Base.astro";
   description="Calculadora de salario en El Salvador: ISSS, AFP y renta mes a mes, más aguinaldo, quincena 25, vacaciones y el costo anual para la empresa."
   eyebrow="El Salvador · planilla 2026"
   heading="Tu salario, en claro."
-  lede="Bruto, descuentos de ley y lo que de verdad llega. Aguinaldo, quincena 25 y vacaciones van aparte: no salen del depósito de cada mes."
+  lede="El bruto es lo que dice el contrato. El depósito es lo que debería llegar después de ISSS, AFP y renta. Aguinaldo, quincena 25 y vacaciones van aparte: no salen de cada mes."
   sources="Estimación con las reglas vigentes a septiembre de 2026. Tablas de retención del Decreto Ejecutivo 10 de 2025. ISSS del trabajador 3% con tope de $1,000. AFP del trabajador 7.25%, sin tope desde enero de 2023. Aguinaldo legal: 15, 19 o 21 días. Quincena 25: 50% si el salario nominal es de $1,500 o menos. Vacaciones: 15 días más 30%. Salarios mínimos del Decreto Ejecutivo 11, desde el 1 de junio de 2025: comercio, servicios e industria $408.80; maquila $402.32; agrícola $305.23. Jornada de más de 5 horas y menos de 8: salario mínimo de jornada completa, artículo 144 del Código de Trabajo."
 >
   <div class="layout">
     <aside class="card side reveal">
       <label class="field">
-        <span>Salario mensual bruto, según contrato</span>
+        <span>Salario del contrato, al mes</span>
         <input id="gross" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" autocomplete="off" />
       </label>
+      <p class="hint" style="margin-top:-6px">Eso es el bruto: la cifra del papel, antes de ISSS, AFP y renta.</p>
       <label class="field">
-        <span>Depósito mensual, opcional</span>
+        <span>Lo que te depositaron este mes</span>
         <input id="deposit" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Opcional" autocomplete="off" />
       </label>
-      <p class="hint" style="margin-top:-6px">Si lo dejas vacío, no se compara. Escríbelo solo si quieres ver si lo que te depositan cuadra con la ley. Aguinaldo, quincena 25 y salarios extra van en otros pagos.</p>
+      <p class="hint" style="margin-top:-6px">Opcional. Si lo dejas vacío, no se compara. Aguinaldo, quincena 25 y salarios extra van en otros pagos.</p>
 
-      <p class="block-label">Tiempo con este patrono</p>
-      <div class="segments" id="tenure" role="radiogroup" aria-label="Antigüedad">
+      <p class="block-label">Tiempo en este trabajo</p>
+      <div class="segments" id="tenure" role="radiogroup" aria-label="Tiempo en este trabajo">
         <button type="button" data-tenure="lt1" aria-pressed="false">Menos de 1 año</button>
         <button type="button" data-tenure="y1" aria-pressed="false">1 a menos de 3</button>
         <button type="button" data-tenure="y3" aria-pressed="false">3 a menos de 10</button>
         <button type="button" data-tenure="y10" aria-pressed="false">10 años o más</button>
       </div>
+      <p class="hint">Sirve para aguinaldo, quincena 25 y vacaciones. Si recién empiezas, elige menos de 1 año.</p>
       <label class="field" id="months-wrap" hidden style="margin-top:12px">
         <span>Meses cumplidos (para el proporcional)</span>
         <input id="months" type="number" min="0" max="11" step="1" value="0" />
@@ -65,7 +67,7 @@ import Base from "../layouts/Base.astro";
 
       <label class="check">
         <input id="insaforp" type="checkbox" />
-        <span>La empresa tiene 10 personas o más (paga INSAFORP, 1%. No sale de tu salario).</span>
+        <span>La empresa tiene 10 personas o más. Eso lo paga ella (INSAFORP, 1%), no sale de tu depósito.</span>
       </label>
       <button class="ghost" id="min-wage" type="button">Usar salario mínimo</button>
       <p class="hint">Solo cambia el salario mensual del sector elegido. El depósito se queda vacío, salvo que tú lo escribas para comparar.</p>

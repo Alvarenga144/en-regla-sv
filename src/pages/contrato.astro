@@ -1,0 +1,62 @@
+---
+import Base from "../layouts/Base.astro";
+import Cite from "../components/Cite.astro";
+---
+
+<Base
+  title="El contrato"
+  description="Qué firmar en el primer empleo en El Salvador: contrato por escrito, período de prueba, planilla, servicios profesionales y pago en efectivo, para quien sale del bachillerato o de la universidad."
+  eyebrow="Paso 1 · antes de firmar"
+  heading="El papel vale más que el WhatsApp."
+  lede="Da igual si sales del bachillerato o de la universidad. Antes del primer depósito hay un contrato, un tipo de contratación y un par de cosas que conviene preguntar en voz alta."
+  sources="Código de Trabajo: el contrato va por escrito, tu copia es tuya, y el patrono remite la tercera a la Dirección General de Trabajo en ocho días. El período de prueba, si se pacta, son los primeros treinta días. ISSS y AFP no se pausan por estar a prueba. Consultado en septiembre de 2026."
+>
+  <div class="guide">
+    <section class="card reveal">
+      <h2>Cómo te están contratando</h2>
+      <p>No todas las ofertas son el mismo trato. Pregunta esto de frente: ¿voy en planilla, por servicios, o me pagan en efectivo?</p>
+      <ul class="note-list">
+        <li>Planilla es el empleo formal de esta guía. Hay contrato, te descuentan ISSS, AFP y a veces renta, y el sueldo cae a una cuenta a tu nombre.</li>
+        <li>Por servicios, o “con factura”, suena a que trabajas por tu cuenta. Si igual tienes horario, jefe y el mismo puesto todos los días, se parece a un empleo. ISSS y AFP no salen solos: pregúntalos antes de firmar. Esta guía asume que sí hay planilla.</li>
+        <li>En efectivo y sin papel también se trabaja, sobre todo en el primer empleo. Aquí igual sirve para saber qué te correspondería en un puesto formal. Si algo no cuadra, el Ministerio de Trabajo es la ventanilla, no el chat del jefe.</li>
+      </ul>
+      <Cite items={[
+        { href: "https://www.mtps.gob.sv/", label: "Ministerio de Trabajo" },
+      ]} />
+    </section>
+
+    <section class="card reveal">
+      <h2>Qué tiene que decir el contrato</h2>
+      <p>Pídelo por escrito y quédate con tu copia firmada. El patrono envía otra a Trabajo dentro de los ocho días. Si el papel no aparece, el trabajo igual puede existir: la falta del documento se le imputa a quien contrata, no a ti. Aun así, el papel es lo que más te cubre después.</p>
+      <p>Que estén, al menos:</p>
+      <ul class="note-list">
+        <li>Tu nombre y DUI. El primero se tramita desde los 18 años; sin él la planilla no tiene con qué identificarte.</li>
+        <li>El salario del mes, el horario, el lugar y el día en que empiezas.</li>
+        <li>Si el puesto es por tiempo indefinido o tiene fecha de salida.</li>
+        <li>Si te pagan una vez al mes o en dos partes. Esas dos partes son el mismo mes partido, no un salario extra ni la quincena 25.</li>
+      </ul>
+      <p>Guarda ese contrato y el primer boleto de pago. Meses después, si el depósito no cuadra, esos dos papeles son lo que tienes.</p>
+      <Cite items={[
+        { href: "https://elsalvador.eregulations.org/menu/770?l=es", label: "Presentar el contrato en Trabajo, 8 días" },
+      ]} />
+    </section>
+
+    <section class="card reveal">
+      <h2>Los primeros treinta días</h2>
+      <p>El período de prueba solo existe si el contrato lo dice. Son hasta treinta días. En ese lapso cualquiera de los dos puede terminar el trato sin dar una razón. Si pasan los treinta días y sigues, el contrato sigue.</p>
+      <p>Eso no apaga el ISSS ni la AFP. El seguro y la pensión empiezan el día en que empiezas a trabajar, aunque el papel diga que estás a prueba. Tampoco te pueden poner otra prueba si te vuelven a contratar para lo mismo antes de un año.</p>
+      <Cite items={[
+        { href: "https://natlex.ilo.org/dyn/natlex2/natlex2/files/download/49592/DL%2015%201972.pdf", label: "Código de Trabajo · arts. 18 y 28" },
+      ]} />
+      <a class="chip" href="/isss/">Sigue el seguro</a>
+    </section>
+
+    <section class="card reveal">
+      <h2>Si sales del colegio, o de la U</h2>
+      <p>El trámite formal es el mismo. Cambia el sueldo, no las reglas. Si vienes del bachillerato, lo más nuevo suele ser el DUI, la cuenta de banco y elegir AFP por primera vez. Si vienes de la universidad, a veces ya te afiliaron a una AFP en el campus: esa cuenta sigue siendo tuya, no firmes otra.</p>
+      <p>Una práctica o pasantía no es lo mismo que un puesto. Igual pide por escrito el horario, si hay pago y si hay ISSS. “Es experiencia” no quita que merezcas un papel con lo acordado.</p>
+      <p>Aguinaldo, quincena 25 y la prima de vacaciones no salen del depósito de cada mes. Llegan en otras fechas, y en el primer año a veces van en proporción. La calculadora los arma cuando marcas cuánto llevas en el trabajo.</p>
+      <a class="chip" href="/salario/">Ver un salario</a>
+    </section>
+  </div>
+</Base>

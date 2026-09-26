@@ -5,14 +5,14 @@ import Step from "../components/Step.astro";
 
 <Base
   title="Empezar a trabajar en El Salvador"
-  description="Guía para el primer empleo formal en El Salvador: ISSS, AFP, cuenta de banco, descuentos del salario y declaración de renta, explicados sin tecnicismos."
+  description="Guía para el primer empleo formal en El Salvador, desde el bachillerato o la universidad: contrato, ISSS, AFP, cuenta de banco, descuentos del salario y renta, explicados sin tecnicismos."
   eyebrow="El Salvador · primer empleo"
   heading="Empieza a trabajar, en regla."
-  lede="Una guía para quien entra al empleo formal y todavía no sabe qué se tramita, qué le descuentan y cuándo toca mirar la renta. No es asesoría legal ni fiscal."
+  lede="Para quien sale del bachillerato o de la universidad y entra a su primer empleo formal. Qué se firma, qué se tramita, qué le descuentan y cuándo toca mirar la renta. No es asesoría legal ni fiscal."
   sources="Guía orientativa con reglas vigentes hacia septiembre de 2026. El trámite concreto lo confirman el ISSS, tu AFP, el Ministerio de Trabajo y el Ministerio de Hacienda."
 >
   <div class="path">
-    <Step num="1" href="#antes" title="Antes de firmar" tone="sage" cta="Ver">
+    <Step num="1" href="/contrato/" title="Antes de firmar" tone="sage">
       Contrato por escrito, DUI a la mano y claro desde el primer día: el período de prueba no pausa el
       seguro ni la pensión.
     </Step>
@@ -39,15 +39,33 @@ import Step from "../components/Step.astro";
   </div>
 
   <div class="stack">
-    <section class="card reveal" id="antes">
-      <h2>Qué tener listo antes del primer día</h2>
-      <ul class="note-list">
-        <li>El DUI vigente. El primero se tramita desde los 18 años, y sin él la planilla no tiene con qué identificarte.</li>
-        <li>Un contrato por escrito: salario mensual, horario, lugar de trabajo y fecha de inicio. Pide tu copia firmada. El patrono lo presenta al Ministerio de Trabajo.</li>
-        <li>Una cuenta de banco a tu nombre, si todavía no la tienes. Ahí va a caer el sueldo.</li>
-        <li>El período de prueba no apaga el ISSS ni la AFP. Esas obligaciones empiezan el día en que empiezas a trabajar, aunque el contrato diga que estás a prueba.</li>
-        <li>Pregunta si te pagan una vez al mes o en dos partes. Esas dos partes son el mismo mes partido, no un salario extra ni la quincena 25.</li>
-        <li>Guarda el contrato y el primer boleto de pago. Si algo no cuadra meses después, ese papel es lo que tienes.</li>
+    <section class="card reveal">
+      <h2>Palabras que vas a oír</h2>
+      <ul class="terms">
+        <li>
+          <b>Patrono</b>
+          <span>La empresa o la persona que te contrata y te paga.</span>
+        </li>
+        <li>
+          <b>Planilla</b>
+          <span>La lista con la que te pagan en regla: ISSS, AFP y el depósito.</span>
+        </li>
+        <li>
+          <b>Bruto</b>
+          <span>Lo que dice el contrato, antes de cualquier descuento.</span>
+        </li>
+        <li>
+          <b>Neto</b>
+          <span>Lo que debería caer a la cuenta después de ISSS, AFP y renta.</span>
+        </li>
+        <li>
+          <b>Boleto de pago</b>
+          <span>El papel o el PDF de cada mes. Ahí se ve cada descuento.</span>
+        </li>
+        <li>
+          <b>NIT</b>
+          <span>El número de Hacienda. En muchas personas naturales ya es el mismo DUI.</span>
+        </li>
       </ul>
     </section>
 
@@ -56,8 +74,8 @@ import Step from "../components/Step.astro";
         <h2>Lo que sí te pueden descontar</h2>
         <p class="hint" style="margin-top:0">
           De un salario formal salen, como regla, tres cosas: ISSS por la salud, AFP hacia tu pensión, y
-          renta si el salario gravable ya entra en un tramo con impuesto. Un préstamo, un anticipo o una
-          cuota que tú aceptaste es otra cosa, y tiene que estar explicada.
+          renta si el salario ya entra en un tramo con impuesto. Un préstamo, un anticipo o una cuota que
+          tú aceptaste es otra cosa, y tiene que estar explicada.
         </p>
         <a class="chip" href="/salario/">Revisar un salario</a>
       </section>
@@ -67,7 +85,7 @@ import Step from "../components/Step.astro";
           Aguinaldo, quincena 25 y la prima de vacaciones llegan en otros momentos. No salen del depósito
           de cada mes, y no deberías verlos restados de tu sueldo ordinario.
         </p>
-        <a class="chip" href="/renta/">Cuándo se declara</a>
+        <a class="chip" href="/salario/">Ver esas fechas</a>
       </section>
     </div>
   </div>
