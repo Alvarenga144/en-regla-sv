@@ -1,0 +1,16 @@
+export const site = {
+  name: "En regla",
+  tagline: "Empezar a trabajar en El Salvador, sin perderse en el camino.",
+  author: "Esteban Alvarenga",
+  github: "https://github.com/estebanalvarenga",
+  linkedin: "https://www.linkedin.com/in/estebanalvarenga",
+};
+
+export const nav = [
+  { href: "/", label: "Inicio" },
+  { href: "/isss/", label: "Seguro social" },
+  { href: "/afp/", label: "AFP" },
+  { href: "/banco/", label: "Cuenta de banco" },
+  { href: "/salario/", label: "Tu salario" },
+  { href: "/renta/", label: "Renta" },
+];

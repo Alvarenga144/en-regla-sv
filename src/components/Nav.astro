@@ -1,0 +1,14 @@
+---
+import { nav, site } from "../data/site";
+
+const { path } = Astro.props;
+---
+
+<nav class="site-nav" aria-label="Secciones">
+  <a class="brand" href="/">{site.name}</a>
+  <div class="site-links">
+    {nav.map((item) => (
+      <a href={item.href} aria-current={item.href === path ? "page" : undefined}>{item.label}</a>
+    ))}
+  </div>
+</nav>

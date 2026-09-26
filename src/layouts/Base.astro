@@ -1,0 +1,106 @@
+---
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import { site } from "../data/site";
+import "../styles/global.css";
+
+const { title, description, eyebrow, heading, lede, sources } = Astro.props;
+const path = Astro.url.pathname;
+const canonical = new URL(path, Astro.site);
+---
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} · {site.name}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={site.author} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_SV" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={`${title} · ${site.name}`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={`${title} · ${site.name}`} />
+    <meta name="twitter:description" content={description} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,520;9..144,640&family=Outfit:wght@380;460;560&display=swap"
+      rel="stylesheet"
+    />
+    <script is:inline>
+      document.documentElement.classList.add("js-motion");
+    </script>
+  </head>
+  <body>
+    <div class="wrap">
+      <Nav path={path} />
+
+      <header class="top reveal">
+        <div>
+          <p class="eyebrow">{eyebrow}</p>
+          <h1>{heading}</h1>
+          <p class="lede">{lede}</p>
+        </div>
+      </header>
+
+      <slot />
+
+      <Footer sources={sources} />
+    </div>
+
+    <script is:inline>
+      (function () {
+        const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const targets = document.querySelectorAll(".reveal");
+
+        if (reduce || !("IntersectionObserver" in window)) {
+          targets.forEach((node) => node.classList.add("is-in"));
+        } else {
+          const observer = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add("is-in");
+                  observer.unobserve(entry.target);
+                }
+              });
+            },
+            { rootMargin: "0px 0px -8% 0px", threshold: 0.08 }
+          );
+          targets.forEach((node) => observer.observe(node));
+        }
+
+        function flash(id) {
+          const target = document.getElementById(id);
+          if (!target) return;
+          target.classList.add("is-in");
+          target.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+          target.classList.remove("is-target");
+          void target.offsetWidth;
+          target.classList.add("is-target");
+          window.setTimeout(() => target.classList.remove("is-target"), 2600);
+        }
+
+        document.querySelectorAll('a[href^="#"]').forEach((link) => {
+          link.addEventListener("click", (event) => {
+            const id = link.getAttribute("href").slice(1);
+            if (!id || !document.getElementById(id)) return;
+            event.preventDefault();
+            history.replaceState(null, "", "#" + id);
+            flash(id);
+          });
+        });
+
+        if (location.hash.length > 1) {
+          window.setTimeout(() => flash(location.hash.slice(1)), 120);
+        }
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,473 @@
+
+const SECTORS = {
+  comercio: { name: "comercio, servicios e industria", monthly: 408.8, daily: 13.44, hourly: 1.68 },
+  maquila: { name: "maquila textil y confección", monthly: 402.32, daily: 13.227, hourly: 1.653 },
+  agro: { name: "el sector agrícola", monthly: 305.23, daily: 10.035, hourly: 1.254 },
+};
+const EXEMPT_PERMANENT = 817.6;
+const EXEMPT_2026 = 1500;
+const KEY = "en-regla-salario";
+
+const moneyFmt = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
+function money(n) {
+  return Math.round((n + Number.EPSILON) * 100) / 100;
+}
+
+function fmt(n) {
+  return moneyFmt.format(money(n));
+}
+
+function isrMonthly(base) {
+  if (!(base > 550)) return 0;
+  let raw;
+  if (base <= 895.24) raw = (base - 550) * 0.1 + 17.67;
+  else if (base <= 2038.1) raw = (base - 895.24) * 0.2 + 60;
+  else raw = (base - 2038.1) * 0.3 + 288.57;
+  return money(raw);
+}
+
+function isrAnnual(base) {
+  if (!(base > 6600)) return 0;
+  let raw;
+  if (base <= 10742.86) raw = (base - 6600) * 0.1 + 212.12;
+  else if (base <= 24457.14) raw = (base - 10742.86) * 0.2 + 720;
+  else raw = (base - 24457.14) * 0.3 + 3462.86;
+  return money(raw);
+}
+
+function extraIsr(monthlyBase, added) {
+  if (!(added > 0)) return 0;
+  if (isrMonthly(added) === 0) {
+    return money(isrMonthly(monthlyBase + added) - isrMonthly(monthlyBase));
+  }
+  return isrMonthly(added);
+}
+
+function readNumber(id, fallback) {
+  const value = Number(document.getElementById(id).value);
+  return Number.isFinite(value) ? value : fallback;
+}
+
+function pressedValue(groupId, attr, fallback) {
+  const pressed = document.querySelector(`#${groupId} button[aria-pressed='true']`);
+  return pressed ? pressed.dataset[attr] : fallback;
+}
+
+function setPressed(groupId, attr, value) {
+  document.querySelectorAll(`#${groupId} button`).forEach((button) => {
+    button.setAttribute("aria-pressed", button.dataset[attr] === value ? "true" : "false");
+  });
+}
+
+function tenure() {
+  return pressedValue("tenure", "tenure", "y1");
+}
+
+function setTenure(value) {
+  setPressed("tenure", "tenure", value);
+  document.getElementById("months-wrap").hidden = value !== "lt1";
+}
+
+function sectorOf() {
+  return SECTORS[document.getElementById("sector").value] || SECTORS.comercio;
+}
+
+function legalFloor(sector, hours, days) {
+  const fullDay = hours > 5;
+  const fullMonth = fullDay && days >= 5;
+  if (fullMonth) {
+    return {
+      amount: sector.monthly,
+      detail: `Con más de 5 horas al día y ${days} días a la semana, el mínimo de ${sector.name} es ${fmt(sector.monthly)} al mes. Si el día pasa de 5 horas y no llega a 8, igual corresponde la jornada completa.`,
+    };
+  }
+  if (fullDay) {
+    const amount = money(sector.daily * days * 52 / 12);
+    return {
+      amount,
+      detail: `Cada día de más de 5 horas cuenta como jornada completa (${fmt(sector.daily)} en ${sector.name}). Con ${days} días a la semana, el piso del mes queda cerca de ${fmt(amount)}.`,
+    };
+  }
+  const amount = money(sector.hourly * hours * days * 52 / 12);
+  return {
+    amount,
+    detail: `Con ${hours} horas al día el piso es proporcional: ${fmt(sector.hourly)} la hora ordinaria en ${sector.name}. A ${days} días por semana, eso da cerca de ${fmt(amount)} al mes.`,
+  };
+}
+
+function aguinaldoDays(code) {
+  if (code === "y10") return { days: 21, label: "21 días, porque llevas 10 años o más" };
+  if (code === "y3") return { days: 19, label: "19 días, porque llevas de 3 a menos de 10 años" };
+  return { days: 15, label: code === "lt1"
+    ? "15 días de un año completo, en proporción a los meses trabajados"
+    : "15 días, porque llevas de 1 a menos de 3 años" };
+}
+
+function calculate() {
+  const gross = Math.max(0, readNumber("gross", 0));
+  const depositRaw = document.getElementById("deposit").value.trim();
+  const deposit = depositRaw === "" ? null : Math.max(0, readNumber("deposit", 0));
+  const hours = Math.min(12, Math.max(1, readNumber("hours", 8)));
+  const days = Math.min(6, Math.max(1, readNumber("days", 5)));
+  const code = tenure();
+  const months = Math.min(11, Math.max(0, readNumber("months", 0)));
+  const factor = code === "lt1" ? months / 12 : 1;
+  const insaforpOn = document.getElementById("insaforp").checked;
+  const extraCount = Math.min(6, Math.max(0, Math.round(readNumber("extra", 0))));
+  const sector = sectorOf();
+  const floor = legalFloor(sector, hours, days);
+
+  const isss = money(Math.min(gross, 1000) * 0.03);
+  const afp = money(gross * 0.0725);
+  const gravable = money(gross - isss - afp);
+  const annualGross = money(gross * 12);
+  const deduction1600 = annualGross <= 9100 && annualGross > 0;
+  const taxBase = deduction1600 ? Math.max(0, gravable - 1600 / 12) : gravable;
+  const renta = isrMonthly(taxBase);
+  const discounts = money(isss + afp + renta);
+  const net = money(gross - discounts);
+
+  const spec = aguinaldoDays(code);
+  const aguinaldo = money((gross / 30) * spec.days * factor);
+  const extraGross = money(gross * extraCount * factor);
+  const taxable2026 = money(Math.max(0, aguinaldo - EXEMPT_2026));
+  const taxablePermanent = money(Math.max(0, aguinaldo - EXEMPT_PERMANENT));
+  const rentaAguinaldo2026 = extraIsr(taxBase, taxable2026);
+  const rentaAguinaldoPermanent = extraIsr(taxBase, taxablePermanent);
+  const aguinaldoNet = money(aguinaldo - rentaAguinaldo2026);
+
+  const q25Full = gross <= 1500 ? money(gross * 0.5) : 0;
+  const q25 = money(q25Full * factor);
+
+  const primaFull = money((gross / 30) * 15 * 0.3);
+  const prima = code === "lt1" ? money(primaFull * factor) : primaFull;
+  const rentaPrima = code === "lt1" ? 0 : extraIsr(taxBase, prima);
+  const primaNet = money(prima - rentaPrima);
+
+  const isssEr = money(Math.min(gross, 1000) * 0.075);
+  const afpEr = money(gross * 0.0875);
+  const insaforp = insaforpOn ? money(gross * 0.01) : 0;
+
+  const annualGravable = money(gravable * 12 + taxable2026 + (code === "lt1" ? 0 : prima));
+  const annualDeduction = deduction1600 ? 1600 : 0;
+  const annualTax = isrAnnual(Math.max(0, annualGravable - annualDeduction));
+  const withheld = money(renta * 12 + rentaAguinaldo2026 + (code === "lt1" ? 0 : rentaPrima));
+
+  return {
+    gross, deposit, hours, days, code, months, factor, insaforpOn, extraCount, sector, floor,
+    isss, afp, gravable, taxBase, renta, discounts, net, deduction1600, annualGross,
+    spec, aguinaldo, extraGross, rentaAguinaldo2026, rentaAguinaldoPermanent, aguinaldoNet,
+    q25, q25Full, prima, primaFull, rentaPrima, primaNet,
+    isssEr, afpEr, insaforp, annualGravable, annualTax, withheld,
+  };
+}
+
+function receiptItem(label, amount, note, extraClass) {
+  return `<li class="${extraClass || ""}"><div>${label}${note ? `<small>${note}</small>` : ""}</div><div>${amount}</div></li>`;
+}
+
+function render() {
+  const c = calculate();
+  document.getElementById("sector-hint").textContent =
+    `Mínimo de ${c.sector.name}: ${fmt(c.sector.monthly)} al mes, ${fmt(c.sector.hourly)} la hora.`;
+  const banner = document.getElementById("banner");
+  const title = document.getElementById("banner-title");
+  const text = document.getElementById("banner-text");
+  banner.className = "banner";
+
+  const floorBox = document.getElementById("floor");
+  if (!(c.gross > 0)) {
+    title.textContent = "Escribe el salario mensual del contrato.";
+    text.textContent = "Con el bruto mensual se arman ISSS, AFP, renta y el depósito mensual.";
+    document.getElementById("hero-net").textContent = fmt(0);
+    document.getElementById("hero-sub").textContent = "";
+    document.getElementById("reading").textContent = "";
+    floorBox.hidden = true;
+    return;
+  }
+
+  if (c.deposit === null) {
+    title.textContent = "Depósito mensual de ley.";
+    text.textContent = "Si escribes el depósito mensual, lo comparo con este neto. Aguinaldo, quincena 25 y salarios extra llegan en otros pagos, no en ese depósito.";
+  } else {
+    const gap = money(c.deposit - c.net);
+    if (Math.abs(gap) < 0.02) {
+      title.textContent = "El depósito mensual cuadra.";
+      text.textContent = `De ${fmt(c.gross)} brutos, el depósito mensual de ley es ${fmt(c.net)}. ISSS, AFP y renta suman ${fmt(c.discounts)}.`;
+    } else if (gap < 0) {
+      banner.classList.add("short");
+      title.textContent = `El depósito mensual es ${fmt(Math.abs(gap))} menor.`;
+      text.textContent = `Con ISSS, AFP y renta, el depósito mensual de ley sería ${fmt(c.net)}. La diferencia puede ser un préstamo, una pensión alimenticia, un embargo o un seguro de planilla. El boleto de pago lo aclara.`;
+    } else {
+      banner.classList.add("over");
+      title.textContent = `El depósito mensual es ${fmt(gap)} mayor.`;
+      text.textContent = `El depósito mensual de ley, con solo ISSS, AFP y renta, es ${fmt(c.net)}. Lo que llega de más puede ser hora extra, un bono de ese mes o un redondeo.`;
+    }
+  }
+
+  const floorGap = money(c.floor.amount - c.gross);
+  if (floorGap > 0.05) {
+    floorBox.hidden = false;
+    document.getElementById("floor-title").textContent = "Este salario queda bajo la ley.";
+    document.getElementById("floor-text").textContent =
+      `${c.floor.detail} Con la cifra de ahora faltarían ${fmt(floorGap)} al mes. El desglose de abajo igual calcula ISSS, AFP y renta sobre lo que escribiste.`;
+  } else {
+    floorBox.hidden = true;
+  }
+
+  document.getElementById("hero-net").textContent = fmt(c.net);
+  document.getElementById("hero-sub").textContent =
+    `${fmt(c.gross)} brutos − ${fmt(c.discounts)} de descuentos. Ese resultado es el depósito mensual. El AFP entra a tu cuenta de pensión.`;
+
+  const above = money(c.gross - c.floor.amount);
+  let floorSentence;
+  if (floorGap > 0.05) {
+    floorSentence = c.floor.detail;
+  } else if (Math.abs(above) < 0.05) {
+    floorSentence = `Este bruto es el salario mínimo de ${c.sector.name} para la jornada que marcaste.`;
+  } else {
+    floorSentence = `Este bruto queda ${fmt(above)} sobre el mínimo de ${c.sector.name} para esta jornada (${fmt(c.floor.amount)}).`;
+  }
+  let bracketSentence;
+  if (c.renta === 0) {
+    bracketSentence = "La renta de este mes es cero: la base gravada no pasa de $550, o la deducción de $1,600 la deja ahí.";
+  } else if (c.taxBase <= 895.24) {
+    bracketSentence = "La renta cae en el tramo del 10%.";
+  } else if (c.taxBase <= 2038.1) {
+    bracketSentence = "La renta cae en el tramo del 20%.";
+  } else {
+    bracketSentence = "La renta cae en el tramo del 30%, el más alto de la tabla.";
+  }
+  const isssSentence = c.gross > 1000
+    ? "El ISSS ya llegó a su tope, así que se queda en $30 aunque el salario suba."
+    : "El ISSS es el 3% del salario, porque todavía no llegas al tope de $1,000.";
+  const q25Sentence = c.gross > 1500
+    ? "La quincena 25 ya no aplica: el salario pasa de $1,500."
+    : Math.abs(c.gross - 1500) < 0.001
+      ? "La quincena 25 todavía aplica, justo en el límite de $1,500."
+      : "La quincena 25 aplica: el salario no pasa de $1,500.";
+  document.getElementById("reading").textContent = `${floorSentence} ${isssSentence} ${bracketSentence} ${q25Sentence}`;
+
+  const pct = (part) => `${(part / c.gross * 100).toLocaleString("en-US", { maximumFractionDigits: 1 })}%`;
+  document.getElementById("pills").innerHTML = [
+    ["ISSS", c.isss, "sky"],
+    ["AFP", c.afp, "lilac"],
+    ["Renta", c.renta, "rose"],
+  ].map(([name, value]) => `<span class="pill"><b>${name}</b> ${fmt(value)} · ${pct(value)}</span>`).join("");
+
+  const isssNote = c.gross > 1000
+    ? "3% sobre $1,000. Pasas el tope, así que no sube de $30."
+    : "3% de tu salario. El tope del ISSS es $30, cuando el sueldo pasa de $1,000.";
+  const afpNote = "7.25% del salario completo. Desde 2023 la AFP no tiene tope.";
+  let rentaNote;
+  if (c.renta === 0) {
+    rentaNote = c.deduction1600
+      ? "Sin retención. Tu salario anual no pasa de $9,100, y además está la deducción fija de $1,600."
+      : "Sin retención. La base gravada, ya sin ISSS ni AFP, no pasa de $550 al mes.";
+  } else if (c.taxBase <= 895.24) {
+    rentaNote = `Tramo del 10%: (${fmt(c.taxBase)} − $550) × 10% + $17.67.`;
+  } else if (c.taxBase <= 2038.1) {
+    rentaNote = `Tramo del 20%: (${fmt(c.taxBase)} − $895.24) × 20% + $60.00.`;
+  } else {
+    rentaNote = `Tramo del 30%: (${fmt(c.taxBase)} − $2,038.10) × 30% + $288.57.`;
+  }
+  if (c.deduction1600 && c.renta > 0) {
+    rentaNote += " Se restó la deducción fija de $1,600 al año antes de la tabla.";
+  }
+
+  document.getElementById("receipt").innerHTML = [
+    receiptItem("Bruto del contrato", fmt(c.gross), "Antes de cualquier descuento."),
+    receiptItem("ISSS", `−${fmt(c.isss)}`, isssNote, "minus"),
+    receiptItem("AFP", `−${fmt(c.afp)}`, afpNote, "minus"),
+    receiptItem("Renta", `−${fmt(c.renta)}`, `${rentaNote} Base gravada: ${fmt(c.gravable)}.`, "minus"),
+    receiptItem("Depósito mensual", fmt(c.net), "Lo que la planilla debe depositar cada mes. Aguinaldo, quincena 25 y salarios extra van aparte.", "net"),
+  ].join("");
+
+  const rows = [
+    ["Mes", c.gross, c.net],
+    ["Quincena", c.gross / 2, c.net / 2],
+    ["Semana", c.gross * 12 / 52, c.net * 12 / 52],
+    ["Día", c.gross / 30, c.net / 30],
+    ["Hora", (c.gross / 30) / c.hours, (c.net / 30) / c.hours],
+  ];
+  document.getElementById("periods").innerHTML = rows.map(([name, bruto, neto]) => `
+    <div class="period">
+      <span class="k">${name}</span>
+      <div class="b"><span>Bruto</span><b>${fmt(bruto)}</b></div>
+      <div class="n"><span>Neto</span><b>${fmt(neto)}</b></div>
+    </div>
+  `).join("");
+  document.getElementById("period-note").textContent =
+    `La semana es el promedio del año (mes × 12 ÷ 52). El día legal es el mes ÷ 30, y la hora es ese día ÷ ${c.hours} h. Tu jornada queda en ${c.hours * c.days} h a la semana; la diurna máxima es 44.`;
+
+  const weekHours = c.hours * c.days;
+  document.getElementById("jornada-hint").textContent =
+    weekHours > 44
+      ? `Eso son ${weekHours} h a la semana. La jornada diurna ordinaria llega hasta 44.`
+      : `Eso son ${weekHours} h a la semana. El pago por día no usa esos días: usa el mes dividido entre 30.`;
+
+  let aguinaldoTaxNote;
+  if (c.aguinaldo <= EXEMPT_PERMANENT) {
+    aguinaldoTaxNote = "No paga ISSS, no paga AFP y no paga renta. Queda bajo la exención permanente de $817.60 y bajo la de 2026, de $1,500.";
+  } else if (c.rentaAguinaldo2026 === 0) {
+    aguinaldoTaxNote = `No cotiza ISSS ni AFP. Con la exención aprobada para el pago de 2026 (hasta $1,500) no paga renta. Si solo aplicara la exención permanente de $817.60, la renta estimada sería ${fmt(c.rentaAguinaldoPermanent)}.`;
+  } else {
+    aguinaldoTaxNote = `No cotiza ISSS ni AFP. Sobre lo que pasa de $1,500, la renta estimada es ${fmt(c.rentaAguinaldo2026)}.`;
+  }
+  const atQ25Limit = Math.abs(c.gross - 1500) < 0.001;
+  const q25Note = c.gross > 1500
+    ? `Con ${fmt(c.gross)} la ley no da quincena 25. El corte es $1,500.00 exactos: en ese salario todavía corresponde el 50%.`
+    : atQ25Limit
+      ? "Estás justo en el límite de $1,500. Es el 50% del salario, sin renta, sin ISSS y sin AFP. Se paga del 15 al 25 de enero. Desde 2027 es obligatoria también en empresa privada; en enero de 2026 lo fue en el sector público y voluntaria en el privado."
+      : "Es el 50% del salario, sin renta, sin ISSS y sin AFP. Se paga del 15 al 25 de enero y, desde 2027, también en empresa privada.";
+
+  const isssVac = c.gross >= 1000
+    ? "El ISSS de ese mes sigue en $30, porque ya estás en el tope."
+    : "Si la prima entra en la planilla de ese mes, el ISSS puede subir un poco, porque todavía no llegas al tope de $30.";
+  const vacNote = c.code === "lt1"
+    ? `Todavía no se pagan hasta cumplir el año. Al cumplir el año, la prima extra sería ${fmt(c.primaFull)}. Con ${c.months} meses, lo acumulado ronda ${fmt(c.prima)}. Los 15 días de salario ya van dentro del sueldo del mes en que descansas.`
+    : `Los 15 días de descanso ya van dentro de tu sueldo. Esto es solo el 30% extra. En el mes que lo paguen, la renta de ese mes sube cerca de ${fmt(c.rentaPrima)}, así que entrarían unos ${fmt(c.primaNet)}. ${isssVac}`;
+
+  document.getElementById("benefits").innerHTML = `
+    <article class="benefit rose">
+      <span class="k">Aguinaldo</span>
+      <div class="v">${fmt(c.aguinaldoNet)}</div>
+      <p>${c.spec.label}. Bruto ${fmt(c.aguinaldo)}. ${aguinaldoTaxNote} Puede pagarse, en un solo abono, entre el 1 de octubre y el 20 de diciembre. La antigüedad se mira al 12 de diciembre.</p>
+    </article>
+    <article class="benefit butter">
+      <span class="k">Quincena 25</span>
+      <div class="v">${fmt(c.q25)}</div>
+      <p>${q25Note}${c.code === "lt1" ? ` Con menos de un año se paga en proporción: aquí, ${c.months} de 12 meses. En enero puedes estar más cerca de cumplir el año que en el aguinaldo.` : ""}</p>
+    </article>
+    <article class="benefit sky">
+      <span class="k">Prima de vacaciones</span>
+      <div class="v">${fmt(c.code === "lt1" ? c.prima : c.primaNet)}</div>
+      <p>${vacNote}</p>
+    </article>
+  `;
+
+  const yearSalary = money(c.net * 12);
+  const yearVacation = c.code === "lt1" ? 0 : c.primaNet;
+  const yearTotal = money(yearSalary + c.aguinaldoNet + c.q25 + yearVacation + c.extraGross);
+  const yearItems = [
+    receiptItem("12 depósitos mensuales", fmt(yearSalary), "El depósito de cada mes, doce veces. No incluye aguinaldo ni quincena 25."),
+    receiptItem("Aguinaldo", fmt(c.aguinaldoNet), "Pago de fin de año, aparte de los 12 depósitos."),
+    receiptItem("Quincena 25", fmt(c.q25), "Pago de enero, aparte del depósito mensual."),
+  ];
+  if (c.extraGross > 0) {
+    yearItems.push(receiptItem(
+      c.extraCount === 1 ? "1 salario extra" : `${c.extraCount} salarios extra`,
+      fmt(c.extraGross),
+      "Prestación del contrato, en bruto. No cambia el depósito mensual. Cada banco decide si ese pago lleva AFP o renta.",
+    ));
+  }
+  if (c.code === "lt1") {
+    yearItems.push(receiptItem("Prima de vacaciones", fmt(0), `Aún no corresponde. Al cumplir el año serían ${fmt(c.primaFull)} brutos.`));
+  } else {
+    yearItems.push(receiptItem("Prima de vacaciones", fmt(c.prima), "30% de 15 días."));
+    yearItems.push(receiptItem("Renta extra de esa prima", `−${fmt(c.rentaPrima)}`, "Solo en el mes de vacaciones.", "minus"));
+  }
+  yearItems.push(`<li class="net"><div>Total del año<small>Si lo repartes entre 12 meses, el promedio es ${fmt(yearTotal / 12)}. El depósito mensual sigue siendo ${fmt(c.net)}.</small></div><div>${fmt(yearTotal)}</div></li>`);
+  document.getElementById("year").innerHTML = yearItems.join("");
+  document.getElementById("year-note").textContent = c.code === "lt1"
+    ? "El proporcional usa meses ÷ 12. La planilla real cuenta los días hasta el 12 de diciembre, para el aguinaldo, y hasta el pago de enero, para la quincena 25."
+    : c.extraGross > 0
+      ? "Proyección si el salario se mantiene. Los salarios extra van en bruto: cada banco decide en el contrato si ese pago lleva AFP o renta."
+      : "Proyección si el salario se mantiene y ya cumpliste el año. No incluye horas extra.";
+
+  const gapTax = money(c.annualTax - c.withheld);
+  let filing;
+  if (c.annualGross <= 9100) {
+    filing = `Tu salario anual es ${fmt(c.annualGross)}. Si ese es tu único ingreso y no pasa de $9,100, no estás obligado a presentar la declaración, y te corresponde una deducción fija de $1,600 que aquí ya se tomó en cuenta.`;
+  } else if (c.annualGross > 60000) {
+    filing = `Tu salario anual es ${fmt(c.annualGross)}. Arriba de $60,000 la declaración del impuesto sobre la renta sí es obligatoria, aunque el patrono ya retenga. El formulario es el F-11 y vence el 30 de abril.`;
+  } else {
+    filing = `Tu salario anual es ${fmt(c.annualGross)}. Pasas los $9,100, así que no aplica la deducción fija de $1,600. Con solo este sueldo la retención de planilla (${fmt(c.withheld)}) y el impuesto anual de la tabla (${fmt(c.annualTax)}) ${Math.abs(gapTax) < 0.05 ? "quedan iguales, salvo centavos de redondeo" : `se separan por ${fmt(Math.abs(gapTax))}`}. No es una declaración obligatoria por el solo hecho de ganar esto: el deber expreso de declarar, para quien ya le retienen, aparece arriba de $60,000. Sí conviene el F-11 si tienes gastos médicos, colegiatura u otros ingresos, porque arriba de $9,100 esas deducciones se comprueban en la declaración.`;
+  }
+  document.getElementById("tax-copy").innerHTML = `
+    <ul class="note-list">
+      <li>${filing}</li>
+      <li>La quincena 25 es renta no gravada. No se suma a lo que declaras.</li>
+      <li>El aguinaldo de 2026, si se paga entre el 1 de octubre y el 20 de diciembre y no pasa de $1,500, también queda fuera. La Asamblea lo aprobó el 23 de septiembre de 2026; entra en vigor al publicarse en el Diario Oficial. La exención permanente, por si esa disposición no aplicara, es de dos salarios mínimos de comercio y servicios: ${fmt(EXEMPT_PERMANENT)}.</li>
+      <li>En junio y diciembre el patrono recalcula la renta del semestre. Con un salario fijo, el resultado casi no se mueve.</li>
+    </ul>
+  `;
+
+  const erMonth = money(c.isssEr + c.afpEr + c.insaforp);
+  const erYear = money(c.gross * 12 + erMonth * 12 + c.aguinaldo + c.q25 + c.extraGross + (c.code === "lt1" ? c.prima : c.primaFull));
+  document.getElementById("employer").innerHTML = [
+    receiptItem("ISSS patronal, al mes", fmt(c.isssEr), "7.5% con el mismo tope de $1,000. Máximo $75."),
+    receiptItem("AFP patronal, al mes", fmt(c.afpEr), "8.75% del salario, sin tope."),
+    receiptItem("INSAFORP, al mes", c.insaforpOn ? fmt(c.insaforp) : "$0.00", "1% solo si la empresa tiene 10 personas o más."),
+    receiptItem("Aguinaldo que debe provisionar", fmt(c.aguinaldo), "Lo paga una vez, completo, a ti."),
+    ...(c.extraGross > 0 ? [receiptItem("Salarios extra del contrato", fmt(c.extraGross), "Aparte del aguinaldo y de la quincena 25.")] : []),
+    receiptItem("Quincena 25 que debe provisionar", fmt(c.q25), c.gross > 1500 ? "No aplica por el tope de $1,500." : "Completa y sin descuentos, en enero."),
+    receiptItem("Prima vacacional", fmt(c.code === "lt1" ? c.prima : c.primaFull), "30% de 15 días."),
+    receiptItem("Costo aproximado del año", fmt(erYear), "Salario bruto + aportes + prestaciones. Riesgos profesionales van aparte y dependen de la actividad de la empresa.", "net"),
+  ].join("");
+
+  document.getElementById("also").innerHTML = `
+    <li>El depósito mensual de ley se arma con ISSS, AFP y renta. Si ese depósito cuadra, el boleto no trae otro descuento mensual.</li>
+    <li>El AFP entra a tu cuenta de pensión. El ISSS es el seguro de salud. La renta es el impuesto.</li>
+    <li>Un bono de banco, o cualquier salario extra, es del contrato. La ley solo obliga al aguinaldo de 15, 19 o 21 días. No hay categorías legales de bono bancario.</li>
+    <li>Horas extra, nocturnidad y comisiones no están en el salario del contrato. Si existen, suben bruto, AFP y, a veces, la renta.</li>
+    <li>Si tuvieras dos patronos, el sueldo mayor usa la tabla y el otro puede llevar 10% de retención. Con un solo empleo, eso no aplica.</li>
+    <li>Indemnización y vacación proporcional aparecen si termina el contrato, no en la planilla de un mes normal.</li>
+  `;
+
+  try {
+    localStorage.setItem(KEY, JSON.stringify({
+      gross: document.getElementById("gross").value,
+      deposit: document.getElementById("deposit").value,
+      tenure: c.code,
+      months: document.getElementById("months").value,
+      hours: document.getElementById("hours").value,
+      days: document.getElementById("days").value,
+      insaforp: c.insaforpOn,
+      sector: document.getElementById("sector").value,
+      extra: document.getElementById("extra").value,
+    }));
+  } catch (error) {
+    /* la página sigue funcionando si el navegador bloquea el almacenamiento */
+  }
+}
+
+function restore(data) {
+  if (!data) return;
+  document.getElementById("gross").value = data.gross ?? 1500;
+  document.getElementById("deposit").value = data.deposit ?? "";
+  document.getElementById("months").value = data.months ?? 6;
+  document.getElementById("hours").value = data.hours ?? 8;
+  document.getElementById("days").value = data.days ?? 5;
+  document.getElementById("insaforp").checked = Boolean(data.insaforp);
+  if (data.sector && SECTORS[data.sector]) document.getElementById("sector").value = data.sector;
+  document.getElementById("extra").value = data.extra ?? 0;
+  setTenure(data.tenure || "y1");
+}
+
+document.querySelectorAll("input, select").forEach((input) => input.addEventListener("input", render));
+document.getElementById("sector").addEventListener("change", render);
+document.querySelectorAll("#tenure button").forEach((button) => {
+  button.addEventListener("click", () => {
+    setTenure(button.dataset.tenure);
+    render();
+  });
+});
+document.getElementById("min-wage").addEventListener("click", () => {
+  document.getElementById("gross").value = sectorOf().monthly;
+  render();
+});
+
+try {
+  restore(JSON.parse(localStorage.getItem(KEY) || "null"));
+} catch (error) {
+  restore(null);
+}
+render();
+  

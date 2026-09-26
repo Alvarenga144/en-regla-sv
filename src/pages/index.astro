@@ -1,0 +1,74 @@
+---
+import Base from "../layouts/Base.astro";
+import Step from "../components/Step.astro";
+---
+
+<Base
+  title="Empezar a trabajar en El Salvador"
+  description="Guía para el primer empleo formal en El Salvador: ISSS, AFP, cuenta de banco, descuentos del salario y declaración de renta, explicados sin tecnicismos."
+  eyebrow="El Salvador · primer empleo"
+  heading="Empieza a trabajar, en regla."
+  lede="Una guía para quien entra al empleo formal y todavía no sabe qué se tramita, qué le descuentan y cuándo toca mirar la renta. No es asesoría legal ni fiscal."
+  sources="Guía orientativa con reglas vigentes hacia septiembre de 2026. El trámite concreto lo confirman el ISSS, tu AFP, el Ministerio de Trabajo y el Ministerio de Hacienda."
+>
+  <div class="path">
+    <Step num="1" href="#antes" title="Antes de firmar" tone="sage" cta="Ver">
+      Contrato por escrito, DUI a la mano y claro desde el primer día: el período de prueba no pausa el
+      seguro ni la pensión.
+    </Step>
+    <Step num="2" href="/isss/" title="Seguro social" tone="rose">
+      El ISSS es tu atención de salud. Lo inscribe tu patrono. Tú revisas que el número exista y que el
+      descuento sí esté pagado.
+    </Step>
+    <Step num="3" href="/afp/" title="Tu AFP">
+      Es tu cuenta de pensión, no un impuesto. Tienes 20 días para elegir. Si ya te afiliaste en la
+      universidad, esa cuenta sigue siendo tuya.
+    </Step>
+    <Step num="4" href="/banco/" title="Tu cuenta de banco" tone="sky">
+      Casi toda planilla deposita. Si nunca has tenido cuenta, aquí está qué pedir y qué no aceptar sin
+      preguntar.
+    </Step>
+    <Step num="5" href="/salario/" title="El depósito de cada mes" tone="butter" cta="Calcular">
+      ISSS, AFP y renta son los descuentos de ley. La calculadora te dice cuánto debería llegar, y el
+      depósito real lo comparas solo si quieres.
+    </Step>
+    <Step num="6" href="/renta/" title="La declaración de renta" tone="sky">
+      El descuento mensual y el formulario de abril no son la misma cosa. Aquí está cuándo te toca el
+      F-11 y cuándo todavía no.
+    </Step>
+  </div>
+
+  <div class="stack">
+    <section class="card reveal" id="antes">
+      <h2>Qué tener listo antes del primer día</h2>
+      <ul class="note-list">
+        <li>El DUI vigente. El primero se tramita desde los 18 años, y sin él la planilla no tiene con qué identificarte.</li>
+        <li>Un contrato por escrito: salario mensual, horario, lugar de trabajo y fecha de inicio. Pide tu copia firmada. El patrono lo presenta al Ministerio de Trabajo.</li>
+        <li>Una cuenta de banco a tu nombre, si todavía no la tienes. Ahí va a caer el sueldo.</li>
+        <li>El período de prueba no apaga el ISSS ni la AFP. Esas obligaciones empiezan el día en que empiezas a trabajar, aunque el contrato diga que estás a prueba.</li>
+        <li>Pregunta si te pagan una vez al mes o en dos partes. Esas dos partes son el mismo mes partido, no un salario extra ni la quincena 25.</li>
+        <li>Guarda el contrato y el primer boleto de pago. Si algo no cuadra meses después, ese papel es lo que tienes.</li>
+      </ul>
+    </section>
+
+    <div class="two">
+      <section class="card reveal">
+        <h2>Lo que sí te pueden descontar</h2>
+        <p class="hint" style="margin-top:0">
+          De un salario formal salen, como regla, tres cosas: ISSS por la salud, AFP hacia tu pensión, y
+          renta si el salario gravable ya entra en un tramo con impuesto. Un préstamo, un anticipo o una
+          cuota que tú aceptaste es otra cosa, y tiene que estar explicada.
+        </p>
+        <a class="chip" href="/salario/">Revisar un salario</a>
+      </section>
+      <section class="card reveal">
+        <h2>Lo que no es un descuento mensual</h2>
+        <p class="hint" style="margin-top:0">
+          Aguinaldo, quincena 25 y la prima de vacaciones llegan en otros momentos. No salen del depósito
+          de cada mes, y no deberías verlos restados de tu sueldo ordinario.
+        </p>
+        <a class="chip" href="/renta/">Cuándo se declara</a>
+      </section>
+    </div>
+  </div>
+</Base>
