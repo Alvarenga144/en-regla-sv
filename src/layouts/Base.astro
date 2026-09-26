@@ -47,6 +47,9 @@ const canonical = new URL(path, Astro.site);
           <p class="eyebrow">{eyebrow}</p>
           <h1>{heading}</h1>
           <p class="lede">{lede}</p>
+          {reading && (
+            <p class="as-of">Fuentes oficiales, consultadas en septiembre de 2026. Si hay un decreto nuevo, vale ese texto.</p>
+          )}
         </div>
       </header>
 

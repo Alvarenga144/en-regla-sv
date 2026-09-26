@@ -1,5 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
+import Cite from "../components/Cite.astro";
 ---
 
 <Base
@@ -8,13 +9,17 @@ import Base from "../layouts/Base.astro";
   eyebrow="Paso 6 · impuesto"
   heading="La renta del mes y la de abril no son la misma cita."
   lede="Cada mes, si tu salario gravable entra en un tramo, el patrono ya te retiene el impuesto y lo entrega a Hacienda. La declaración es otra cosa: un formulario del año, el F-11, que se presenta al año siguiente."
-  sources="Retención mensual según el Decreto Ejecutivo 10 de 2025. Deducción fija de $1,600 cuando el ingreso ordinario anual no pasa de $9,100. Declaración obligatoria, para quien ya le retienen, arriba de $60,000. Plazo del F-11: 30 de abril."
+  sources="Retención mensual según el Decreto Ejecutivo 10 de 2025. Deducción fija de $1,600 cuando el ingreso ordinario anual no pasa de $9,100. Declaración obligatoria, para quien ya le retienen, arriba de $60,000. Plazo del F-11: 30 de abril. Consultado en septiembre de 2026."
 >
   <div class="guide">
     <section class="card reveal">
       <h2>Lo que ya va en el depósito</h2>
       <p>La retención mensual se calcula sobre el salario después de restar ISSS y AFP. Hasta $550 de esa base, la tabla vigente no retiene. Desde ahí hay tramos de 10%, 20% y 30%. Si tu salario anual ordinario no pasa de $9,100, antes de la tabla se resta una deducción fija de $1,600, repartida en el año.</p>
       <p>Ese descuento ya salió de tu cuenta. No es un pago que tú vayas a repetir cada mes en una ventanilla.</p>
+      <Cite items={[
+        { href: "https://www.mh.gob.sv/modificacion-a-las-tablas-de-retencion-del-impuesto-sobre-la-renta-decreto-ejecutivo-no-10/", label: "Hacienda · Decreto Ejecutivo 10" },
+        { href: "https://www.transparenciafiscal.gob.sv/downloads/pdf/700-DGII-DC-2025-01.pdf", label: "Tablas de retención, PDF" },
+      ]} />
       <a class="chip" href="/salario/">Ver la renta de un salario</a>
     </section>
 
@@ -27,6 +32,10 @@ import Base from "../layouts/Base.astro";
         <li>Entre esos dos puntos, con solo este sueldo, la retención del año y el impuesto de la tabla casi coinciden. El F-11 importa si tienes otros ingresos, o gastos que la ley deja deducir y que arriba de $9,100 se comprueban en la declaración, como médicos o colegiatura.</li>
         <li>También declara quien está inscrito en IVA, o a quien le retuvieron renta por un servicio, aunque el sueldo sea bajo. Si tu caso no es solo un salario, confirma el criterio del año en Hacienda.</li>
       </ul>
+      <Cite items={[
+        { href: "https://www.mh.gob.sv/realiza-tu-declaracion-del-impuesto-sobre-la-renta/", label: "Hacienda · declaración de renta" },
+        { href: "https://portaldgii.mh.gob.sv/ssc/", label: "Portal de servicios en línea" },
+      ]} />
     </section>
 
     <section class="card reveal">
@@ -37,6 +46,9 @@ import Base from "../layouts/Base.astro";
         <li>Comprobantes, si vas a deducir algo. Sin documento, ese gasto no resta.</li>
       </ul>
       <p>La quincena 25 no se suma a la renta que declaras. El aguinaldo tiene su propia exención: en 2026, si se paga entre el 1 de octubre y el 20 de diciembre y no pasa de $1,500, queda fuera. Esa exención de $1,500 quedó aprobada por la Asamblea el 23 de septiembre de 2026 y entra en vigor al publicarse en el Diario Oficial. La exención permanente, por si esa disposición no aplicara, es de dos salarios mínimos de comercio: $817.60.</p>
+      <Cite items={[
+        { href: "https://www.infobae.com/el-salvador/2026/09/23/el-salvador-asamblea-legislativa-aprueba-que-el-aguinaldo-pueda-pagarse-desde-el-1-de-octubre/", label: "Asamblea, 23 sept. 2026 · aguinaldo y exención" },
+      ]} />
     </section>
   </div>
 </Base>

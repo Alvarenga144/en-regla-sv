@@ -6,8 +6,8 @@ const SECTORS = {
 };
 const EXEMPT_PERMANENT = 817.6;
 const EXEMPT_2026 = 1500;
-const KEY = "en-regla-salario.v2";
-const LEGACY_KEYS = ["calculadora-salario-sv", "en-regla-salario"];
+const KEY = "en-regla-salario.v3";
+const LEGACY_KEYS = ["calculadora-salario-sv", "en-regla-salario", "en-regla-salario.v2"];
 
 const moneyFmt = new Intl.NumberFormat("en-US", {
   style: "currency",

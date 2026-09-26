@@ -479,6 +479,30 @@ footer.sources {
   max-width: none;
 }
 
+.as-of {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.cite {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
+.cite + .chip { margin-top: 12px; }
+
+.cite a {
+  color: var(--lilac-ink);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(92, 77, 134, 0.28);
+}
+
+.cite a:hover { border-bottom-color: var(--lilac-ink); }
+.cite-sep { color: var(--muted); }
+
 .guide p { margin: 0 0 10px; line-height: 1.55; }
 .guide p:last-child { margin-bottom: 0; }
 

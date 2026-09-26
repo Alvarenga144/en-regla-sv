@@ -1,5 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
+import Cite from "../components/Cite.astro";
 ---
 
 <Base
@@ -8,19 +9,27 @@ import Base from "../layouts/Base.astro";
   eyebrow="Paso 4 · dónde cae el sueldo"
   heading="Si nunca has tenido cuenta, esto también es parte."
   lede="Casi toda planilla formal deposita en un banco. Nadie te lo explica porque suena obvio, y aun así mucha gente llega al primer empleo con todo listo menos esto."
-  sources="Orientación general. Cada banco fija sus propios requisitos, montos de apertura y comisiones, y puede cambiarlos. Confirma con el banco antes de abrir, y con tu empresa antes de entregar el número."
+  sources="Orientación general. Cada banco fija sus propios requisitos, montos de apertura y comisiones, y puede cambiarlos. Confirma con el banco antes de abrir, y con tu empresa antes de entregar el número. Superintendencia del Sistema Financiero y Ley para Facilitar la Inclusión Financiera. Consultado en septiembre de 2026."
 >
   <div class="guide">
     <section class="card reveal">
       <h2>Lo mínimo para abrir una</h2>
       <p>Para una primera cuenta de ahorro suelen pedirte el DUI vigente, decir a qué te dedicas y de dónde vienen los fondos, y a veces un monto pequeño de apertura. Si ya tienes trabajo, puede servir la carta o constancia laboral. Cada banco tiene su propia lista, así que confírmala antes de ir.</p>
+      <p>Existen también cuentas de ahorro con requisitos simplificados: con el DUI y sin monto mínimo de apertura. Tienen límites de saldo y de movimientos; el banco debe explicártelos al abrirla.</p>
       <p>Pregunta tres cosas antes de firmar: si la cuenta cobra mantenimiento, si exige un saldo mínimo, y qué pasa si un mes no entra depósito. Una cuenta que se come el saldo en comisiones no sirve para recibir sueldo.</p>
+      <Cite items={[
+        { href: "https://ssf.gob.sv/preguntas-frecuentes/son-iguales-los-requisitos-para-apertura-de-cuenta-en-todas-las-entidades-bancarias/", label: "SSF · cada banco pone sus requisitos" },
+        { href: "https://edufinanciera.ssf.gob.sv/diferenciacion-entre-cars-y-otras-cuentas-de-ahorro/", label: "SSF · cuentas con requisitos simplificados" },
+      ]} />
     </section>
 
     <section class="card reveal">
       <h2>La cuenta de planilla</h2>
       <p>Muchas empresas trabajan con un banco y te ofrecen abrir ahí. Es cómodo, y a veces esa cuenta viene sin comisión mientras te depositen. La cuenta es tuya, no de la empresa: si te vas, el saldo sigue siendo tuyo, aunque las condiciones pueden cambiar cuando dejen de depositarte.</p>
       <p>Lo que la empresa necesita es el número de cuenta y el banco, a tu nombre. Si te piden abrirla, está bien. Si alguien te pide la clave, el PIN o la tarjeta, eso no. Ningún pago de planilla necesita tu contraseña.</p>
+      <Cite items={[
+        { href: "https://ssf.gob.sv/preguntas-frecuentes/en-que-tipo-de-cuentas-de-ahorro-me-solicitan-monto-minimo-de-apertura-y-cuales-no/", label: "SSF · montos mínimos de apertura" },
+      ]} />
     </section>
 
     <section class="card reveal">

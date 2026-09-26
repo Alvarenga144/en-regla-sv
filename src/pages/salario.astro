@@ -14,11 +14,11 @@ import Base from "../layouts/Base.astro";
     <aside class="card side reveal">
       <label class="field">
         <span>Salario mensual bruto, según contrato</span>
-        <input id="gross" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" />
+        <input id="gross" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" autocomplete="off" />
       </label>
       <label class="field">
         <span>Depósito mensual, opcional</span>
-        <input id="deposit" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Opcional" />
+        <input id="deposit" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Opcional" autocomplete="off" />
       </label>
       <p class="hint" style="margin-top:-6px">Si lo dejas vacío, no se compara. Escríbelo solo si quieres ver si lo que te depositan cuadra con la ley. Aguinaldo, quincena 25 y salarios extra van en otros pagos.</p>
 
