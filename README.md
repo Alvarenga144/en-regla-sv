@@ -2,7 +2,11 @@
 
 Guía y calculadora para empezar a trabajar en regla en El Salvador. Está pensada para quien sale del bachillerato o de la universidad y entra a su primer empleo formal: qué se firma, qué se tramita, qué le descuentan del salario y cuándo toca mirar la renta.
 
-Sitio: [en-regla.sv](https://en-regla.sv)
+Sitio: [enreglasv.com](https://enreglasv.com)
+
+Si este repositorio te sirve, una estrella ayuda a que otros lo encuentren.
+
+[![Estrellas en GitHub](https://img.shields.io/github/stars/Alvarenga144/en-regla-sv?style=social)](https://github.com/Alvarenga144/en-regla-sv)
 
 Es material orientativo, personal y sin fines de lucro. No es asesoría legal, laboral ni fiscal, y no representa al ISSS, a ninguna AFP, al Ministerio de Trabajo ni al Ministerio de Hacienda. Las reglas cambian: antes de un trámite o un reclamo, confirma el caso con la institución que corresponda.
 
@@ -50,7 +54,7 @@ npm run build    # genera el sitio estático en dist/
 npm run preview  # sirve esa carpeta en local
 ```
 
-La URL canónica (`https://en-regla.sv`) está en `astro.config.mjs`. Ahí también se genera el sitemap.
+La URL canónica (`https://enreglasv.com`) está en `astro.config.mjs`. Ahí también se genera el sitemap.
 
 ## Estructura
 

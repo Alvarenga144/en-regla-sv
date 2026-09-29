@@ -2,7 +2,7 @@ import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
 
 export default defineConfig({
-  site: "https://en-regla.sv",
+  site: "https://enreglasv.com",
   trailingSlash: "always",
   integrations: [sitemap()],
 });
