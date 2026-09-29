@@ -55,7 +55,7 @@ const canonical = new URL(path, Astro.site);
 
       <slot />
 
-      <Footer sources={sources} />
+      <Footer sources={sources} shareUrl={canonical.href} shareTitle={title} />
     </div>
 
     <script is:inline>

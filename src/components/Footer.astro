@@ -1,8 +1,10 @@
 ---
 import { site } from "../data/site";
 
-const { sources } = Astro.props;
+const { sources, shareUrl, shareTitle } = Astro.props;
 const year = new Date().getFullYear();
+const shareText = `Te dejo esto de En regla: ${shareTitle}. ${shareUrl}`;
+const whatsapp = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
 ---
 
 <footer class="site-footer reveal">
@@ -29,7 +31,49 @@ const year = new Date().getFullYear();
       <a class="site-chip" href={site.url} target="_blank" rel="noopener noreferrer">
         estebanalvarenga.com
       </a>
+      <div class="share">
+        <p class="eyebrow">Si te sirvió</p>
+        <p class="foot-note">Pásalo a quien está por empezar.</p>
+        <div class="share-actions">
+          <a class="site-chip" href={whatsapp} target="_blank" rel="noopener noreferrer">WhatsApp</a>
+          <button class="site-chip" type="button" id="copy-link" data-url={shareUrl} aria-live="polite">Copiar enlace</button>
+        </div>
+        <p class="foot-github">
+          Si miras el código, una{" "}
+          <a href={site.github} target="_blank" rel="noopener noreferrer">estrella en GitHub</a>
+          {" "}también cuenta.
+        </p>
+      </div>
     </div>
   </div>
   <p class="foot-legal">© {year} <a href={site.url} target="_blank" rel="noopener noreferrer">{site.author}</a>. Hecho en El Salvador, para quien empieza.</p>
 </footer>
+
+<script>
+  const button = document.getElementById("copy-link");
+  if (button instanceof HTMLButtonElement) {
+    const label = button.textContent ?? "Copiar enlace";
+    button.addEventListener("click", async () => {
+      const url = button.dataset.url ?? "";
+      let copied = false;
+      try {
+        await navigator.clipboard.writeText(url);
+        copied = true;
+      } catch {
+        const area = document.createElement("textarea");
+        area.value = url;
+        area.setAttribute("readonly", "");
+        area.style.position = "fixed";
+        area.style.left = "-9999px";
+        document.body.append(area);
+        area.select();
+        copied = document.execCommand("copy");
+        area.remove();
+      }
+      button.textContent = copied ? "Enlace copiado" : "No se pudo copiar";
+      window.setTimeout(() => {
+        button.textContent = label;
+      }, 2000);
+    });
+  }
+</script>

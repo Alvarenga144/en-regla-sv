@@ -606,6 +606,36 @@ footer.sources {
   background: #fffaf6;
 }
 
+button.site-chip {
+  cursor: pointer;
+}
+
+.share {
+  margin-top: 22px;
+}
+
+.share-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.foot-github {
+  margin: 14px 0 0;
+  font-size: 0.78rem;
+}
+
+.foot-github a {
+  color: var(--lilac-ink);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(92, 77, 134, 0.28);
+}
+
+.foot-github a:hover {
+  border-bottom-color: var(--lilac-ink);
+}
+
 .foot-legal {
   margin: 22px 0 0;
   padding-top: 14px;
