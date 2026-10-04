@@ -140,6 +140,15 @@ a { color: inherit; }
   color: var(--lilac-ink);
 }
 
+.breadcrumbs { margin: -8px 0 22px; color: var(--muted); font-size: .85rem; }
+.breadcrumbs ol { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 0; padding: 0; }
+.breadcrumbs li + li::before { content: '/'; margin-right: 8px; color: var(--muted); }
+.breadcrumbs a { text-underline-offset: 3px; }
+.breadcrumbs [aria-current="page"] { color: var(--lilac-ink); }
+.reading .breadcrumbs { width: min(760px, 100%); margin-inline: auto; }
+.calculator-explainer { margin-top: 18px; }
+.calculator-explainer p { line-height: 1.6; color: var(--muted); }
+
 header.top {
   display: flex;
   justify-content: space-between;

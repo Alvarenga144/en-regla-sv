@@ -73,7 +73,7 @@ const sectorLabels: Record<string, string> = { comercio: 'Comercio e industria',
         <button class="ghost" id="clear-calculator" type="button">Limpiar calculadora</button>
       </div>
     </aside>
-    <main>
+    <div class="calculator-results">
       <section class="banner" id="banner" role="status" aria-live="polite"><div><strong id="banner-title">Empieza con el salario del contrato</strong><p id="banner-text">El depósito es opcional.</p></div></section>
       <section class="banner warn" id="floor" hidden><div><strong id="floor-title"></strong><p id="floor-text"></p><a href="/ayuda/">Cómo consultar tu caso</a></div></section>
       <div id="results" hidden>
@@ -97,7 +97,15 @@ const sectorLabels: Record<string, string> = { comercio: 'Comercio e industria',
         <details class="card disclosure employer"><summary>Aportes que paga la empresa</summary><ul class="receipt" id="employer"></ul></details>
         <details class="card disclosure"><summary>Qué puede cambiar esta estimación</summary><ul class="note-list" id="also"></ul></details>
       </div>
-    </main>
+      <section class="card calculator-explainer" aria-labelledby="calculator-explainer-title">
+        <h2 id="calculator-explainer-title">Cómo calcular tu salario neto en El Salvador</h2>
+        <p>Ingresa el salario bruto mensual de tu contrato, antes de descuentos. La calculadora estima el neto después de ISSS, AFP y retención de renta para un mes ordinario completo.</p>
+        <p>Si recibes dos quincenas, ingresa ambos depósitos del mismo mes para comparar su suma. No incluyas bonos, anticipos ni aguinaldo en esa comparación.</p>
+        <p>Abre las secciones de prestaciones para elegir tu tiempo en el trabajo y el año del escenario. Los montos de aguinaldo, vacaciones y quincena 25 se muestran por separado; no son un neto anual final.</p>
+        <p>Los datos se procesan en tu navegador. Puedes usar la calculadora sin subir documentos ni activar el guardado de datos.</p>
+        <a class="help-link" href="/boleto/">Ver un ejemplo de boleto de pago explicado →</a>
+      </section>
+    </div>
   </div>
   <script src="../scripts/calculadora.js"></script>
 </Base>

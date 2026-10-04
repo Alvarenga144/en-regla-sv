@@ -59,6 +59,35 @@ npm run preview  # sirve esa carpeta en local
 
 La URL canónica (`https://enreglasv.com`) está en `astro.config.mjs`. Ahí también se genera el sitemap.
 
+## SEO y vistas previas al compartir
+
+Cada guía tiene un título y una descripción propios en `src/data/seo.ts`, redactados para las preguntas del primer empleo en El Salvador. `Base.astro` genera enlaces canónicos, Open Graph, tarjetas de imagen grande para X y datos estructurados JSON-LD (`WebSite`, `Person`, `WebPage`, `ImageObject`, `Article` para las guías y `BreadcrumbList` para las rutas internas). Las rutas de navegación también son visibles; el marcado describe contenido real, sin reseñas, credenciales ni fechas de publicación inventadas.
+
+`src/assets/banner-preview.png` es el original de la vista previa. Se guarda en `src/assets` para que Astro lo procese; `public` queda para archivos que se sirven sin transformar, como el favicon. Astro conserva su composición y genera una versión JPEG de 1200 × 630 píxeles, de aproximadamente 111 KB. Las URLs de la imagen son absolutas y usan el mismo dominio que los enlaces canónicos. Cuando cambia la imagen, su nombre generado también cambia para facilitar la actualización de cachés. El original debe incluirse al guardar y desplegar el proyecto.
+
+Las guías y la explicación de la calculadora se entregan como HTML estático, legible sin JavaScript. El cálculo interactivo necesita JavaScript. El sitio permite rastreo mediante `robots.txt` y anuncia el sitemap; no depende de archivos especiales para IA ni promete posicionamiento o citas en asistentes. El contenido enlaza sus fuentes oficiales y conserva los avisos sobre sus límites.
+
+La página de error `404.html` está marcada `noindex` y queda fuera del sitemap. El proveedor de hosting debe servirla con estado HTTP 404 para rutas inexistentes, sin convertirlas en páginas de inicio con estado 200.
+
+Verificación antes de publicar:
+
+```bash
+npm run build
+npm test
+npm run test:seo
+```
+
+Las pruebas de SEO inspeccionan las nueve páginas generadas, su metadata, entidades, referencias internas, sitemap, robots, página de error y archivo de imagen. `verify-ui.mjs` comprueba navegación, tamaños de pantalla, recursos sociales y funcionamiento de los inputs y cálculos con Playwright.
+
+Después de desplegar:
+
+- Verifica el dominio en Google Search Console y Bing Webmaster Tools y envía `https://enreglasv.com/sitemap-index.xml`. La verificación requiere acceso a esas cuentas o al DNS; no se configura con identificadores ficticios.
+- Inspecciona la portada y la calculadora con las herramientas de URLs y resultados enriquecidos. Comprueba que páginas, estilos e imagen sean públicos y no estén bloqueados por el hosting, CDN o protección contra bots.
+- Comprueba la vista previa con Meta Sharing Debugger y al compartir un enlace real en WhatsApp y X. Estas plataformas pueden conservar previews anteriores en caché.
+- Revisa clics e impresiones para ajustar títulos y contenido a búsquedas reales. Mantén las fuentes y fechas editoriales cuando cambien las reglas; no actualices fechas solo para aparentar contenido reciente.
+
+Referencias: [guía de Google para búsquedas con IA](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide), [datos estructurados de navegación](https://developers.google.com/search/docs/appearance/structured-data/breadcrumb) y [protocolo Open Graph](https://ogp.me/).
+
 ## Estructura
 
 ```text

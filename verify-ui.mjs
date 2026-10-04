@@ -13,7 +13,7 @@ const server = createServer(async (req, res) => {
     const file = resolve(root, '.' + pathname);
     if (!file.startsWith(root + sep)) { res.writeHead(403).end(); return; }
     const content = await readFile(file);
-    res.setHeader('Content-Type', ({'.html':'text/html; charset=utf-8','.css':'text/css','.js':'text/javascript','.xml':'application/xml','.txt':'text/plain'})[extname(file)] || 'application/octet-stream');
+    res.setHeader('Content-Type', ({'.html':'text/html; charset=utf-8','.css':'text/css','.js':'text/javascript','.xml':'application/xml','.txt':'text/plain','.jpeg':'image/jpeg','.jpg':'image/jpeg','.png':'image/png','.svg':'image/svg+xml'})[extname(file)] || 'application/octet-stream');
     res.end(content);
   } catch { res.writeHead(404).end(); }
 });
@@ -32,6 +32,13 @@ try {
     assert.equal(response.status(),200,route);
     await page.waitForLoadState('networkidle');
     assert.equal(await page.locator('h1').count(),1);
+    assert.equal(await page.locator('main').count(),1);
+    const socialUrl = await page.locator('meta[property="og:image"]').getAttribute('content');
+    const socialImage = await context.request.get(base + new URL(socialUrl).pathname);
+    assert.equal(socialImage.status(),200);
+    assert.ok(socialImage.headers()['content-type'].includes('image/jpeg'));
+    const graph = await page.locator('script[type="application/ld+json"]').textContent();
+    assert.equal(JSON.parse(graph)['@context'],'https://schema.org');
     assert.equal(await page.locator('.site-links [aria-current="page"]').count(),1);
     const links = await page.locator('a[href^="/"]').evaluateAll(nodes => [...new Set(nodes.map(node=>node.getAttribute('href')))]);
     for (const link of links) assert.equal((await context.request.get(base+link)).status(),200,link);
@@ -124,6 +131,9 @@ try {
   await plain.goto(base+'/isss/');
   assert.ok(await plain.locator('h1').isVisible());
   assert.ok(await plain.locator('.guide .card').first().isVisible());
+  await plain.goto(base+'/salario/');
+  assert.ok(await plain.locator('#calculator-explainer-title').isVisible());
+  assert.ok(await plain.locator('.calculator-explainer a[href="/boleto/"]').isVisible());
   const blocked = await browser.newContext();
   await blocked.addInitScript(()=>{Storage.prototype.getItem = ()=>{throw new Error('disabled')};Storage.prototype.setItem = ()=>{throw new Error('disabled')};Storage.prototype.removeItem = ()=>{throw new Error('disabled')};});
   const blockedPage = await blocked.newPage();

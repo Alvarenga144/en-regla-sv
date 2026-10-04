@@ -3,33 +3,97 @@ import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import GuideActions from "../components/GuideActions.astro";
 import { guideActions } from "../data/guide-actions";
-import { site } from "../data/site";
+import { nav, site } from "../data/site";
+import { pageSeo } from "../data/seo";
+import { getImage } from "astro:assets";
+import banner from "../assets/banner-preview.png";
 import "../styles/global.css";
 
-const { title, description, eyebrow, heading, lede, sources } = Astro.props;
+const { title, description, eyebrow, heading, lede, sources, noindex = false } = Astro.props;
 const path = Astro.url.pathname;
 const reading = ["/contrato/", "/isss/", "/afp/", "/banco/", "/renta/", "/boleto/", "/ayuda/"].includes(path);
 const canonical = new URL(path, Astro.site);
+const home = new URL('/', Astro.site).href;
+const seo = pageSeo[path];
+const seoTitle = `${seo?.title ?? title} · ${site.name}`;
+const seoDescription = seo?.description ?? description;
+const currentSection = nav.find(item => item.href === path);
+// Preserve the supplied composition; only resize and encode for social previews.
+const preview = await getImage({ src: banner, width: 1200, format: 'jpeg', quality: 85 });
+const previewUrl = new URL(preview.src, Astro.site).href;
+const imageAlt = 'En regla: guía para tu primer empleo en El Salvador y calculadora de salario, con contrato, ISSS, AFP, cuenta bancaria y renta.';
+const authorId = `${home}#author`;
+const websiteId = `${home}#website`;
+const imageId = `${home}#social-image`;
+const pageId = `${canonical.href}#webpage`;
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': 'Person', '@id': authorId, name: site.author, url: site.url },
+    {
+      '@type': 'WebSite', '@id': websiteId, url: home, name: site.name,
+      description: site.tagline, inLanguage: 'es-SV', publisher: { '@id': authorId },
+    },
+    {
+      '@type': 'ImageObject', '@id': imageId, url: previewUrl, contentUrl: previewUrl,
+      width: preview.attributes.width, height: preview.attributes.height, caption: imageAlt,
+    },
+    {
+      '@type': 'WebPage', '@id': pageId, url: canonical.href,
+      name: seoTitle, description: seoDescription, inLanguage: 'es-SV',
+      isPartOf: { '@id': websiteId }, author: { '@id': authorId },
+      primaryImageOfPage: { '@id': imageId },
+      about: { '@type': 'Thing', name: seo?.topic ?? title },
+      ...(path !== '/' ? { breadcrumb: { '@id': `${canonical.href}#breadcrumb` } } : {}),
+    },
+    ...(path !== '/' ? [{
+      '@type': 'BreadcrumbList', '@id': `${canonical.href}#breadcrumb`,
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: home },
+        { '@type': 'ListItem', position: 2, name: currentSection?.label ?? title, item: canonical.href },
+      ],
+    }] : []),
+    ...(reading ? [{
+      '@type': 'Article', '@id': `${canonical.href}#article`, headline: heading,
+      description: seoDescription, inLanguage: 'es-SV', isAccessibleForFree: true,
+      author: { '@id': authorId }, publisher: { '@id': authorId },
+      mainEntityOfPage: { '@id': pageId }, image: { '@id': imageId },
+    }] : []),
+  ],
+};
 ---
 
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es-SV" prefix="og: https://ogp.me/ns#">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title} · {site.name}</title>
-    <meta name="description" content={description} />
+    <title>{seoTitle}</title>
+    <meta name="description" content={seoDescription} />
     <meta name="author" content={site.author} />
+    <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'} />
+    <meta name="theme-color" content="#f4eee8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonical} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={reading ? 'article' : 'website'} />
     <meta property="og:locale" content="es_SV" />
     <meta property="og:site_name" content={site.name} />
-    <meta property="og:title" content={`${title} · ${site.name}`} />
-    <meta property="og:description" content={description} />
+    <meta property="og:title" content={seoTitle} />
+    <meta property="og:description" content={seoDescription} />
     <meta property="og:url" content={canonical} />
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content={`${title} · ${site.name}`} />
-    <meta name="twitter:description" content={description} />
+    <meta property="og:image" content={previewUrl} />
+    <meta property="og:image:secure_url" content={previewUrl} />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content={preview.attributes.width} />
+    <meta property="og:image:height" content={preview.attributes.height} />
+    <meta property="og:image:alt" content={imageAlt} />
+    {reading && <meta property="article:author" content={site.url} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={seoTitle} />
+    <meta name="twitter:description" content={seoDescription} />
+    <meta name="twitter:image" content={previewUrl} />
+    <meta name="twitter:image:alt" content={imageAlt} />
+    {!noindex && <script type="application/ld+json" set:html={JSON.stringify(structuredData).replace(/</g, '\\u003c')} />}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -44,20 +108,27 @@ const canonical = new URL(path, Astro.site);
     <a class="skip-link" href="#contenido">Saltar al contenido</a>
     <div class="wrap">
       <Nav path={path} />
+      {path !== '/' && !noindex && (
+        <nav class="breadcrumbs" aria-label="Ruta de navegación">
+          <ol><li><a href="/">Inicio</a></li><li aria-current="page">{currentSection?.label ?? title}</li></ol>
+        </nav>
+      )}
 
-      <header class="top reveal" id="contenido" tabindex="-1">
-        <div>
-          <p class="eyebrow">{eyebrow}</p>
-          <h1>{heading}</h1>
-          <p class="lede">{lede}</p>
-          {reading && (
-            <p class="as-of">Revisión editorial: <time datetime="2026-10-04">4 de octubre de 2026</time>. Consulta las fuentes junto a cada tema; las condiciones dependen de tu caso y del período.</p>
-          )}
-        </div>
-      </header>
+      <main id="page-content">
+        <header class="top reveal" id="contenido" tabindex="-1">
+          <div>
+            <p class="eyebrow">{eyebrow}</p>
+            <h1>{heading}</h1>
+            <p class="lede">{lede}</p>
+            {reading && (
+              <p class="as-of">Revisión editorial: <time datetime="2026-10-04">4 de octubre de 2026</time>. Consulta las fuentes junto a cada tema; las condiciones dependen de tu caso y del período.</p>
+            )}
+          </div>
+        </header>
 
-      <slot />
-      {guideActions[path] && <div class="guide guide-followup"><GuideActions {...guideActions[path]} /></div>}
+        <slot />
+        {guideActions[path] && <div class="guide guide-followup"><GuideActions {...guideActions[path]} /></div>}
+      </main>
 
       <Footer sources={sources} shareUrl={canonical.href} shareTitle={title} />
     </div>
