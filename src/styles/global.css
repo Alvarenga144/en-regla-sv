@@ -316,6 +316,158 @@ input[type="number"]:focus,
   text-underline-offset: 3px;
 }
 
+.calculator-inputs {
+  display: grid;
+  gap: 24px;
+}
+
+.calculator-inputs > .eyebrow { margin: 0 0 -12px; }
+
+.calculator-inputs .input-section {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.calculator-inputs label.field {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+}
+
+.calculator-inputs label.field > span,
+.calculator-inputs .block-label {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.calculator-inputs label.field > span:not(.hint):not(.select-wrap),
+.calculator-inputs .block-label {
+  color: var(--ink);
+  font-weight: 460;
+}
+
+.calculator-inputs input[data-amount],
+.calculator-inputs input[type="number"] {
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  border: 1px solid rgba(109, 92, 153, 0.2);
+  background: #fff;
+  border-radius: 16px;
+  padding: 12px 14px;
+  font-family: Fraunces, Georgia, serif;
+  font-size: 1.15rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.3;
+  transition: border-color .18s ease, box-shadow .18s ease;
+}
+
+.calculator-inputs input[data-amount]::placeholder,
+.calculator-inputs input[type="number"]::placeholder {
+  font-family: Outfit, "Segoe UI", sans-serif;
+  font-size: .95rem;
+  color: #756a79;
+  opacity: 1;
+}
+
+.calculator-inputs .select-wrap select { min-height: 48px; }
+
+.calculator-inputs input[data-amount]:hover,
+.calculator-inputs input[type="number"]:hover,
+.calculator-inputs .select-wrap select:hover {
+  border-color: rgba(92, 77, 134, .45);
+}
+
+.calculator-inputs input[data-amount]:focus,
+.calculator-inputs input[type="number"]:focus,
+.calculator-inputs .select-wrap select:focus {
+  border-color: var(--lilac-ink);
+  box-shadow: 0 0 0 4px rgba(228, 223, 246, .8);
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.calculator-inputs input[aria-invalid="true"] {
+  border-color: var(--rose-ink);
+  background: #fff5f4;
+}
+
+.calculator-inputs #gross-error,
+.calculator-inputs #deposit-error,
+.calculator-inputs #deposit-second-error { color: var(--rose-ink); }
+
+.calculator-inputs .hint {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.calculator-inputs #amount-help {
+  padding: 12px 14px;
+  background: rgba(228, 223, 246, .35);
+  border-radius: 14px;
+}
+
+.calculator-inputs .disclosure {
+  margin: 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.calculator-inputs .disclosure > summary {
+  padding-block: 4px;
+  font-size: 1.15rem;
+  line-height: 1.45;
+}
+
+.calculator-inputs .disclosure[open] > summary { margin-bottom: 18px; }
+
+.calculator-inputs .disclosure-fields {
+  display: grid;
+  gap: 20px;
+}
+
+.calculator-inputs .pair { gap: 12px; }
+.calculator-inputs .segments { gap: 10px; }
+.calculator-inputs .segments button { min-height: 48px; border-color: var(--line); }
+.calculator-inputs .segments button:hover { border-color: rgba(92, 77, 134, .45); }
+.calculator-inputs .segments button[aria-pressed="true"] { border-color: rgba(92, 77, 134, .35); }
+
+.calculator-inputs .check {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.calculator-inputs input[type="checkbox"] {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin: 2px 0 0;
+  accent-color: var(--lilac-ink);
+}
+
+.calculator-inputs .ghost {
+  margin: 0;
+  min-height: 44px;
+  padding: 10px 14px;
+  border-radius: 14px;
+}
+
+.calculator-inputs #min-wage {
+  background: var(--lilac);
+  text-decoration: none;
+}
+
+.calculator-inputs .ghost:hover { background: rgba(228, 223, 246, .6); }
+
+.calculator-inputs .calculator-actions {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding-top: 20px;
+}
+
 .banner {
   display: flex;
   gap: 14px;
