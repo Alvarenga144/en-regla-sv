@@ -8,13 +8,14 @@ import Cite from "../components/Cite.astro";
   description="La diferencia entre la retención mensual de renta y la declaración anual F-11 en El Salvador: quién declara, hasta cuándo y qué papeles guardar."
   eyebrow="Paso 6 · impuesto"
   heading="La renta del mes y la de abril no son la misma cita."
-  lede="Si este es tu primer sueldo y anda cerca del mínimo, casi seguro no te retienen renta cada mes y no te toca declarar en abril. El descuento del boleto y el formulario F-11 no son la misma cita: uno es del mes, el otro es del año siguiente."
-  sources="Retención mensual según el Decreto Ejecutivo 10 de 2025. Deducción fija de $1,600 cuando el ingreso ordinario anual no pasa de $9,100. Declaración obligatoria, para quien ya le retienen, arriba de $60,000. Plazo del F-11: 30 de abril. Consultado en septiembre de 2026."
+  lede="La retención del boleto es un adelanto del impuesto. La declaración F-11 revisa el año completo. Que un mes no te retengan no basta para saber si debes declarar: también importan tus otros ingresos y las retenciones del año."
+  sources="Revisión del 4 de octubre de 2026. Retenciones: Decreto Ejecutivo 10 de 2025. Declaración de asalariados: art. 38 de la Ley de Impuesto sobre la Renta. Confirma el ejercicio y el vencimiento en Hacienda."
 >
   <div class="guide">
     <section class="card reveal">
       <h2>Lo que ya va en el depósito</h2>
-      <p>Si en el boleto no aparece renta, no tienes que ir a pagar nada a Hacienda ese mes. La retención, cuando sí hay, se calcula sobre el salario después de restar ISSS y AFP. Hasta $550 de esa base, la tabla vigente no retiene. Desde ahí hay tramos de 10%, 20% y 30%. Si tu salario anual ordinario no pasa de $9,100, antes de la tabla se resta una deducción fija de $1,600, repartida en el año.</p>
+      <p>Para un salario ordinario se descuentan las cotizaciones correspondientes y se aplica la tabla de retención. La tabla mensual tiene un tramo sin retención hasta $550 y otros con porcentajes sobre el exceso más una cuota fija. El 20% de un tramo no significa que te quiten el 20% de todo el sueldo.</p>
+      <p>La deducción fija de $1,600 tiene requisitos para asalariados de hasta $9,100 anuales. Si cobras bonos, tienes varios empleos o trabajaste parte del año, confirma cómo se aplica en tu caso y en los recálculos.</p>
       <p>Ese descuento ya salió de tu cuenta. No es un pago que tú vayas a repetir cada mes en una ventanilla.</p>
       <Cite items={[
         { href: "https://www.mh.gob.sv/modificacion-a-las-tablas-de-retencion-del-impuesto-sobre-la-renta-decreto-ejecutivo-no-10/", label: "Hacienda · Decreto Ejecutivo 10" },
@@ -27,12 +28,13 @@ import Cite from "../components/Cite.astro";
       <h2>Cuándo sí miras el F-11</h2>
       <p>El formulario de las personas naturales es el F-11. El plazo ordinario cierra el 30 de abril del año siguiente, en el portal del Ministerio de Hacienda, en declaraciones en línea. Presentarlo tarde puede traer multa e intereses si quedaba impuesto por pagar.</p>
       <ul class="note-list">
-        <li>Si tu único ingreso es el salario y el año no pasa de $9,100, no estás obligado a declarar por ese sueldo, y la deducción de $1,600 ya se toma en la planilla.</li>
-        <li>Arriba de $60,000 al año, la declaración sí es obligatoria aunque el patrono ya te haya retenido.</li>
-        <li>Entre esos dos puntos, con solo este sueldo, la retención del año y el impuesto de la tabla casi coinciden. El F-11 importa si tienes otros ingresos, o gastos que la ley deja deducir y que arriba de $9,100 se comprueban en la declaración, como médicos o colegiatura.</li>
-        <li>También declara quien está inscrito en IVA, o a quien le retuvieron renta por un servicio, aunque el sueldo sea bajo. Si tu caso no es solo un salario, confirma el criterio del año en Hacienda.</li>
+        <li>El art. 38 contempla la no declaración para personas domiciliadas con ingresos exclusivamente salariales y retenciones que correspondan al impuesto.</li>
+        <li>Hay excepciones: rentas superiores a $60,000 al año, retenciones omitidas o diferencias con el impuesto que corresponde. No basta con ganar menos de $60,000 para descartar la declaración.</li>
+        <li>Si prestaste servicios, tuviste otros ingresos o cambiaste de empleo, revisa toda la información del año. La calculadora no determina tu obligación de declarar.</li>
+        <li>Si corresponde una devolución o quieres aplicar deducciones permitidas, reúne los comprobantes y consulta cómo presentarlas.</li>
       </ul>
       <Cite items={[
+        { href: "https://transparencia.mh.gob.sv/downloads/pdf/DC5811.pdf", label: "Ley de Impuesto sobre la Renta · art. 38" },
         { href: "https://www.mh.gob.sv/realiza-tu-declaracion-del-impuesto-sobre-la-renta/", label: "Hacienda · declaración de renta" },
         { href: "https://portaldgii.mh.gob.sv/ssc/", label: "Portal de servicios en línea" },
       ]} />
@@ -45,9 +47,9 @@ import Cite from "../components/Cite.astro";
         <li>Tu acceso al portal de Hacienda, con el DUI. Si nunca entraste, el registro pide un correo que sí revises.</li>
         <li>Comprobantes, si vas a deducir algo. Sin documento, ese gasto no resta.</li>
       </ul>
-      <p>La quincena 25 no se suma a la renta que declaras. El aguinaldo tiene su propia exención: en 2026, si se paga entre el 1 de octubre y el 20 de diciembre y no pasa de $1,500, queda fuera. Esa exención de $1,500 quedó aprobada por la Asamblea el 23 de septiembre de 2026 y entra en vigor al publicarse en el Diario Oficial. La exención permanente, por si esa disposición no aplicara, es de dos salarios mínimos de comercio: $817.60.</p>
+      <p>Un ingreso exento no necesariamente se omite del formulario: informa cada concepto donde Hacienda lo indique. El aguinaldo tiene reglas de exención propias; la Asamblea publicó la aprobación de una disposición de hasta $1,500 para 2026. Confirma su texto publicado y aplicación al período. No asumas que la misma exención se repetirá en 2027.</p>
       <Cite items={[
-        { href: "https://www.infobae.com/el-salvador/2026/09/23/el-salvador-asamblea-legislativa-aprueba-que-el-aguinaldo-pueda-pagarse-desde-el-1-de-octubre/", label: "Asamblea, 23 sept. 2026 · aguinaldo y exención" },
+        { href: "https://asamblea.gob.sv/taxonomy/term/1621", label: "Asamblea Legislativa · disposiciones sobre aguinaldo" },
       ]} />
     </section>
   </div>

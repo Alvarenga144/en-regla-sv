@@ -1,0 +1,29 @@
+---
+import Base from '../layouts/Base.astro';
+import Cite from '../components/Cite.astro';
+const lines = [
+  ['Salario bruto', '$1,500.00', 'La remuneración del mes antes de descuentos. Compara con el contrato y revisa si el período está completo.'],
+  ['ISSS', '−$30.00', 'En este ejemplo, 3% sobre el tope de $1,000. Revisa también tu acreditación: que aparezca aquí no prueba que ya se pagó al ISSS.'],
+  ['AFP', '−$108.75', '7.25% del bruto para el sistema de pensiones. La empresa aporta además su parte; no debe restarla de tu neto.'],
+  ['Renta', '−$153.20', 'Retención mensual sobre $1,361.25 después de ISSS y AFP. En este tramo: 20% del exceso de $895.24, más $60.'],
+  ['Otros descuentos', '$0.00', 'Si aparecen préstamos, anticipos o cuotas, pide el concepto, el monto y el respaldo que corresponde. No los confundas con ISSS, AFP o renta.'],
+  ['Neto a recibir', '$1,208.05', 'Bruto menos descuentos. Si pagan en dos quincenas, compara la suma de los dos depósitos del mismo mes.'],
+];
+---
+<Base title="Entiende tu boleto" description="Un ejemplo de boleto de pago explicado, concepto por concepto, para tu primer empleo en El Salvador." eyebrow="Tu primer pago" heading="Tu boleto, sin letra pequeña." lede="Toca cada concepto para entenderlo. Este ejemplo es ficticio: un mes completo con salario fijo y sin otros descuentos." sources="Ejemplo educativo revisado el 4 de octubre de 2026. Retención ordinaria según el Decreto Ejecutivo 10 de 2025; no incluye recálculos, bonos ni ausencias.">
+  <div class="guide">
+    <section class="card sample-payslip">
+      <p class="eyebrow">Ejemplo ficticio · mensual · USD</p>
+      <h2>Comprobante de pago</h2>
+      <p>No necesitas subir documentos ni compartir tus datos.</p>
+      {lines.map(([label, amount, explanation]) => <details class="payslip-row"><summary><span>{label}</span><strong>{amount}</strong></summary><p>{explanation}</p></details>)}
+      <Cite items={[{href:'https://www.mh.gob.sv/modificacion-a-las-tablas-de-retencion-del-impuesto-sobre-la-renta-decreto-ejecutivo-no-10/',label:'Hacienda · tabla de retenciones'}, {href:'https://www.crecer.com.sv/web/empresas/tasa-de-cotizacion-y-salarios/',label:'AFP Crecer · tasas de cotización'}]} />
+    </section>
+    <section class="card">
+      <h2>Antes de comparar</h2>
+      <ul class="note-list"><li>Usa el mismo período: un mes completo o las dos quincenas de ese mes.</li><li>Si empezaste a mitad de mes, tu primer pago puede cubrir solo esos días.</li><li>Separa horas extra, comisiones, ausencias, anticipos y prestaciones.</li><li>Un resultado parecido al de la calculadora no confirma que las cotizaciones estén reportadas.</li></ul>
+      <a class="chip" href="/salario/">Calcular con mi salario →</a>
+      <a class="help-link" href="/ayuda/">Hay una diferencia en mi pago</a>
+    </section>
+  </div>
+</Base>

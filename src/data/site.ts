@@ -14,4 +14,6 @@ export const nav = [
   { href: "/banco/", label: "Cuenta de banco" },
   { href: "/salario/", label: "Tu salario" },
   { href: "/renta/", label: "Renta" },
+  { href: "/boleto/", label: "Tu boleto" },
+  { href: "/ayuda/", label: "Algo no cuadra" },
 ];

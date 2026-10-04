@@ -1,0 +1,32 @@
+---
+const { you, employer, check, message, next, label } = Astro.props;
+---
+<section class="card action-card">
+  <p class="eyebrow">Llévalo a la práctica</p>
+  <h2>Tu siguiente paso</h2>
+  <dl class="action-list">
+    <div><dt>Qué te toca hacer</dt><dd>{you}</dd></div>
+    <div><dt>Qué hace la empresa</dt><dd>{employer}</dd></div>
+    <div><dt>Cómo comprobarlo</dt><dd>{check}</dd></div>
+  </dl>
+  <details class="question-copy"><summary>Una forma de preguntarlo</summary>
+    <p>{message}</p>
+    <button type="button" class="site-chip" data-copy-message={message}>Copiar pregunta</button>
+    <span class="copy-status" role="status"></span>
+  </details>
+  <a class="chip" href={next}>Siguiente paso: {label} →</a>
+  <a class="help-link" href="/ayuda/">¿Algo no cuadra?</a>
+</section>
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copy-message]').forEach(button => {
+    button.addEventListener('click', async () => {
+      const status = button.nextElementSibling;
+      try {
+        await navigator.clipboard.writeText(button.dataset.copyMessage ?? '');
+        if (status) status.textContent = 'Pregunta copiada.';
+      } catch {
+        if (status) status.textContent = 'Puedes seleccionar y copiar el texto de arriba.';
+      }
+    });
+  });
+</script>

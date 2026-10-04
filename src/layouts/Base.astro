@@ -1,12 +1,14 @@
 ---
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
+import GuideActions from "../components/GuideActions.astro";
+import { guideActions } from "../data/guide-actions";
 import { site } from "../data/site";
 import "../styles/global.css";
 
 const { title, description, eyebrow, heading, lede, sources } = Astro.props;
 const path = Astro.url.pathname;
-const reading = ["/contrato/", "/isss/", "/afp/", "/banco/", "/renta/"].includes(path);
+const reading = ["/contrato/", "/isss/", "/afp/", "/banco/", "/renta/", "/boleto/", "/ayuda/"].includes(path);
 const canonical = new URL(path, Astro.site);
 ---
 
@@ -34,26 +36,25 @@ const canonical = new URL(path, Astro.site);
       href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,520;9..144,640&family=Outfit:wght@380;460;560&display=swap"
       rel="stylesheet"
     />
-    <script is:inline>
-      document.documentElement.classList.add("js-motion");
-    </script>
   </head>
   <body class:list={[{ reading }]}>
+    <a class="skip-link" href="#contenido">Saltar al contenido</a>
     <div class="wrap">
       <Nav path={path} />
 
-      <header class="top reveal">
+      <header class="top reveal" id="contenido" tabindex="-1">
         <div>
           <p class="eyebrow">{eyebrow}</p>
           <h1>{heading}</h1>
           <p class="lede">{lede}</p>
           {reading && (
-            <p class="as-of">Fuentes oficiales, consultadas en septiembre de 2026. Si hay un decreto nuevo, vale ese texto.</p>
+            <p class="as-of">Revisión editorial: <time datetime="2026-10-04">4 de octubre de 2026</time>. Consulta las fuentes junto a cada tema; las condiciones dependen de tu caso y del período.</p>
           )}
         </div>
       </header>
 
       <slot />
+      {guideActions[path] && <div class="guide guide-followup"><GuideActions {...guideActions[path]} /></div>}
 
       <Footer sources={sources} shareUrl={canonical.href} shareTitle={title} />
     </div>
@@ -84,6 +85,7 @@ const canonical = new URL(path, Astro.site);
           const target = document.getElementById(id);
           if (!target) return;
           target.classList.add("is-in");
+          if (id === 'contenido') target.focus({ preventScroll: true });
           target.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
           target.classList.remove("is-target");
           void target.offsetWidth;

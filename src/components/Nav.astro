@@ -6,9 +6,31 @@ const { path } = Astro.props;
 
 <nav class="site-nav" aria-label="Secciones">
   <a class="brand" href="/">{site.name}</a>
-  <div class="site-links">
+  <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-links" hidden>Menú</button>
+  <div class="site-links" id="site-links">
     {nav.map((item) => (
       <a href={item.href} aria-current={item.href === path ? "page" : undefined}>{item.label}</a>
     ))}
   </div>
 </nav>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>('.menu-toggle');
+  const navigation = document.querySelector('.site-nav');
+  if (button && navigation) {
+    button.hidden = false;
+    navigation.classList.add('has-menu');
+    button.addEventListener('click', () => {
+      const open = button.getAttribute('aria-expanded') !== 'true';
+      button.setAttribute('aria-expanded', String(open));
+      navigation.classList.toggle('menu-open', open);
+    });
+    navigation.addEventListener('keydown', (event) => {
+      if ((event as KeyboardEvent).key === 'Escape') {
+        button.setAttribute('aria-expanded', 'false');
+        navigation.classList.remove('menu-open');
+        button.focus();
+      }
+    });
+  }
+</script>

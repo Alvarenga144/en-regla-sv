@@ -11,6 +11,16 @@ import Step from "../components/Step.astro";
   lede="Para quien sale del bachillerato o de la universidad y entra a su primer empleo formal. Qué se firma, qué se tramita, qué le descuentan y cuándo toca mirar la renta. No es asesoría legal ni fiscal."
   sources="Guía orientativa con reglas vigentes hacia septiembre de 2026. El trámite concreto lo confirman el ISSS, tu AFP, el Ministerio de Trabajo y el Ministerio de Hacienda."
 >
+  <section class="card situation-picker" aria-labelledby="situation-title">
+    <p class="eyebrow">Empieza donde estás</p>
+    <h2 id="situation-title">¿En qué momento vas?</h2>
+    <div class="situation-options">
+      <a href="/contrato/"><b>Busco mi primer trabajo</b><span>Conoce el contrato y las preguntas que conviene llevar.</span></a>
+      <a href="/contrato/#oferta"><b>Ya recibí una oferta</b><span>Revisa salario, horario y condiciones antes de aceptar.</span></a>
+      <a href="/boleto/"><b>Ya estoy trabajando</b><span>Entiende tu primer pago y comprueba tus descuentos.</span></a>
+    </div>
+    <p class="hint">No necesitas haber ido a la universidad ni conocer estos trámites. Puedes seguir el recorrido completo de abajo.</p>
+  </section>
   <div class="path">
     <Step num="1" href="/contrato/" title="Antes de firmar" tone="sage">
       Contrato por escrito, DUI a la mano y claro desde el primer día: el período de prueba no pausa el
@@ -48,7 +58,7 @@ import Step from "../components/Step.astro";
         </li>
         <li>
           <b>Planilla</b>
-          <span>La lista con la que te pagan en regla: ISSS, AFP y el depósito.</span>
+          <span>El registro de salarios, aportes y descuentos que usa la empresa para pagar. Estar en una lista no prueba que las cotizaciones estén pagadas.</span>
         </li>
         <li>
           <b>Bruto</b>

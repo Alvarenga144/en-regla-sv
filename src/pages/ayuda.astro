@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+import Cite from '../components/Cite.astro';
+const cases = [
+  {title:'No tengo copia del contrato',review:'Pide tu copia firmada y confirma lo acordado: salario, fecha de inicio, horario y puesto.',keep:'Guarda la oferta, mensajes, comprobantes de pago y registros de asistencia que tengas legítimamente.',href:'https://www.mtps.gob.sv/guia-de-servicios/',label:'MTPS · orientación y servicios laborales'},
+  {title:'Me descontaron algo que no reconozco',review:'Pide el boleto y la explicación del concepto. Revisa si fue un anticipo, una cuota, una ausencia o un ajuste del período.',keep:'Conserva boletos, contrato, autorizaciones y depósitos del mismo mes. Una diferencia numérica no basta para determinar su causa.',href:'https://www.mtps.gob.sv/guia-de-servicios/',label:'MTPS · consultar una diferencia salarial'},
+  {title:'No aparecen mis cotizaciones',review:'Consulta el período y la fecha de actualización con el ISSS o tu AFP; luego pide a la empresa el respaldo del reporte.',keep:'Guarda el estado de cuenta o acreditación y los boletos del período faltante. Evita publicar tu DUI o datos médicos.',href:'https://ssf.gob.sv/guia-de-servicios/',label:'SSF · consultas sobre pensiones'},
+  {title:'Mi pago llegó incompleto o no llegó',review:'Confirma la fecha acordada, los días trabajados, si hubo dos depósitos y si el banco registró la transferencia.',keep:'Anota fechas y cantidades. Guarda el contrato, las comunicaciones de pago y el estado de cuenta.',href:'https://www.mtps.gob.sv/guia-de-servicios/',label:'MTPS · orientación laboral'},
+  {title:'Hacienda muestra otros ingresos o retenciones',review:'Compara el ejercicio fiscal con todas tus constancias. Si cambiaste de empleo o prestaste servicios, revisa también esos ingresos.',keep:'Conserva constancias y comprobantes. Solicita al pagador que aclare un dato incorrecto y consulta a Hacienda.',href:'https://www.mh.gob.sv/consultas/',label:'Hacienda · canales de consulta'},
+];
+---
+<Base title="Algo no cuadra" description="Qué revisar, qué documentos guardar y dónde consultar si hay diferencias en tu contrato, salario o cotizaciones en El Salvador." eyebrow="Cuando necesitas aclararlo" heading="Algo no cuadra. Vamos por partes." lede="Empieza por el documento y el período. Aquí tienes una ruta para preguntar y buscar ayuda sin adivinar qué pasó." sources="Canales institucionales consultados el 4 de octubre de 2026: MTPS, ISSS, SSF y Ministerio de Hacienda. Cada institución confirma los requisitos y el trámite que corresponde a tu caso.">
+  <div class="guide">
+    {cases.map(item => <details class="card disclosure"><summary>{item.title}</summary><h3>Qué revisar</h3><p>{item.review}</p><h3>Qué guardar</h3><p>{item.keep}</p><Cite items={[{href:item.href,label:item.label}]} /></details>)}
+    <section class="card"><h2>Para consultas del seguro social</h2><p>La afiliación y acreditación de salud se consultan directamente con el ISSS. La AFP atiende tu cuenta de pensiones; la SSF recibe consultas sobre servicios financieros y previsionales.</p><Cite items={[{href:'https://www.isss.gob.sv/preguntas-frecuentes/',label:'ISSS · preguntas y orientación'},{href:'https://ssf.gob.sv/guia-de-servicios/',label:'SSF · atención al usuario'}]} /></section>
+    <section class="card"><h2>Lleva una pregunta concreta</h2><p>“En el boleto de este mes aparece este descuento, pero no sé a qué corresponde. ¿Me pueden compartir el desglose y su respaldo?”</p><p>No necesitas publicar documentos personales ni enviar claves bancarias para pedir orientación.</p><a class="chip" href="/boleto/">Siguiente paso: entender mi boleto →</a></section>
+  </div>
+</Base>

@@ -1,143 +1,83 @@
 ---
 import Base from "../layouts/Base.astro";
+import Cite from "../components/Cite.astro";
+import { SECTORS } from "../lib/payroll.js";
+const sectorLabels: Record<string, string> = { comercio: 'Comercio e industria', maquila: 'Maquila textil', cana: 'Café y caña', agro: 'Agropecuario y pesca' };
 ---
-
-<Base
-  title="Tu salario"
-  description="Calculadora de salario en El Salvador: ISSS, AFP y renta mes a mes, más aguinaldo, quincena 25, vacaciones y el costo anual para la empresa."
-  eyebrow="El Salvador · planilla 2026"
-  heading="Tu salario, en claro."
-  lede="El bruto es lo que dice el contrato. El depósito es lo que debería llegar después de ISSS, AFP y renta. Aguinaldo, quincena 25 y vacaciones van aparte: no salen de cada mes."
-  sources="Estimación con las reglas vigentes a septiembre de 2026. Tablas de retención del Decreto Ejecutivo 10 de 2025. ISSS del trabajador 3% con tope de $1,000. AFP del trabajador 7.25%, sin tope desde enero de 2023. Aguinaldo legal: 15, 19 o 21 días. Quincena 25: 50% si el salario nominal es de $1,500 o menos. Vacaciones: 15 días más 30%. Salarios mínimos del Decreto Ejecutivo 11, desde el 1 de junio de 2025: comercio, servicios e industria $408.80; maquila $402.32; agrícola $305.23. Jornada de más de 5 horas y menos de 8: salario mínimo de jornada completa, artículo 144 del Código de Trabajo."
->
+<Base title="Tu salario" description="Calcula neto, ISSS, AFP y renta en El Salvador. Compara tus pagos y mira cómo se reparte tu salario con una gráfica dinámica." eyebrow="Tu salario · estimación mensual" heading="Tu salario, en claro." lede="El bruto es lo que dice el contrato. Mira cuánto queda después de los descuentos y compara con tu pago, a tu ritmo." sources="Revisión: 4 de octubre de 2026. Tabla de retenciones: Decreto Ejecutivo 10 de 2025. Las proyecciones no sustituyen la planilla ni la declaración; revisa los supuestos y las fuentes junto a los resultados.">
+  <noscript><p class="banner">Activa JavaScript para calcular. Puedes leer <a href="/boleto/">el ejemplo de boleto</a> sin activarlo.</p></noscript>
   <div class="layout">
-    <aside class="card side reveal">
-      <label class="field">
-        <span>Salario del contrato, al mes</span>
-        <input id="gross" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" autocomplete="off" />
-      </label>
-      <p class="hint" style="margin-top:-6px">Eso es el bruto: la cifra del papel, antes de ISSS, AFP y renta.</p>
-      <label class="field">
-        <span>Lo que te depositaron este mes</span>
-        <input id="deposit" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Opcional" autocomplete="off" />
-      </label>
-      <p class="hint" style="margin-top:-6px">Opcional. Si lo dejas vacío, no se compara. Aguinaldo, quincena 25 y salarios extra van en otros pagos.</p>
-
-      <p class="block-label">Tiempo en este trabajo</p>
-      <div class="segments" id="tenure" role="radiogroup" aria-label="Tiempo en este trabajo">
-        <button type="button" data-tenure="lt1" aria-pressed="false">Menos de 1 año</button>
-        <button type="button" data-tenure="y1" aria-pressed="false">1 a menos de 3</button>
-        <button type="button" data-tenure="y3" aria-pressed="false">3 a menos de 10</button>
-        <button type="button" data-tenure="y10" aria-pressed="false">10 años o más</button>
-      </div>
-      <p class="hint">Sirve para aguinaldo, quincena 25 y vacaciones. Si recién empiezas, elige menos de 1 año.</p>
-      <label class="field" id="months-wrap" hidden style="margin-top:12px">
-        <span>Meses cumplidos (para el proporcional)</span>
-        <input id="months" type="number" min="0" max="11" step="1" value="0" />
-      </label>
-
-      <div class="pair" style="margin-top:14px">
-        <label class="field">
-          <span>Horas al día</span>
-          <input id="hours" type="number" min="1" max="12" step="0.5" value="8" />
-        </label>
-        <label class="field">
-          <span>Días a la semana</span>
-          <input id="days" type="number" min="1" max="6" step="0.5" value="5" />
-        </label>
-      </div>
-      <p class="hint" id="jornada-hint"></p>
-
-      <label class="field">
-        <span>Sector, para el salario mínimo</span>
-        <div class="select-wrap">
-          <select id="sector" aria-label="Sector del salario mínimo">
-            <option value="comercio">Comercio y servicios</option>
-            <option value="maquila">Maquila textil</option>
-            <option value="agro">Agrícola</option>
-          </select>
-        </div>
-        <p class="hint" id="sector-hint"></p>
-      </label>
-
-      <label class="field">
-        <span>Salarios extra al año, aparte del aguinaldo</span>
-        <input id="extra" type="number" min="0" max="6" step="1" value="0" />
-      </label>
-
-      <label class="check">
-        <input id="insaforp" type="checkbox" />
-        <span>La empresa tiene 10 personas o más. Eso lo paga ella (INSAFORP, 1%), no sale de tu depósito.</span>
-      </label>
+    <aside class="card side">
+      <p class="eyebrow">Empieza aquí</p>
+      <label class="field"><span>Salario del contrato, al mes</span><input id="gross" type="number" min="0" max="1000000" step="0.01" inputmode="decimal" placeholder="0.00" autocomplete="off" /></label>
+      <p class="hint">Usa el bruto de un mes completo, antes de descuentos. Para un primer mes incompleto, revisa tu boleto.</p>
+      <label class="field"><span>Sector del salario mínimo</span><span class="select-wrap"><select id="sector">{Object.keys(SECTORS).map(key => <option value={key}>{sectorLabels[key]}</option>)}</select></span></label>
+      <p class="hint" id="sector-hint"></p>
       <button class="ghost" id="min-wage" type="button">Usar salario mínimo</button>
-      <p class="hint">Solo cambia el salario mensual del sector elegido. El depósito se queda vacío, salvo que tú lo escribas para comparar.</p>
-    </aside>
-
-    <main>
-      <section class="banner reveal" id="banner">
-        <div>
-          <strong id="banner-title">El depósito mensual cuadra.</strong>
-          <p id="banner-text"></p>
+      <p class="hint">Solo cambia el bruto mensual; no rellena el depósito.</p>
+      <details class="disclosure">
+        <summary>Comparar con lo que recibí</summary>
+        <label class="field"><span>¿Cómo te pagan?</span><span class="select-wrap"><select id="pay-frequency"><option value="month">Un depósito mensual</option><option value="fortnight">Dos quincenas al mes</option></select></span></label>
+        <label class="field"><span id="deposit-label">Depósito del mes completo</span><input id="deposit" type="number" min="0" max="1000000" step="0.01" inputmode="decimal" placeholder="Opcional" autocomplete="off" /></label>
+        <label class="field" id="deposit-second-wrap" hidden><span>Segundo depósito del mismo mes</span><input id="deposit-second" type="number" min="0" max="1000000" step="0.01" inputmode="decimal" placeholder="Opcional" autocomplete="off" /></label>
+        <p class="hint">No incluyas aguinaldo, bonos ni anticipos en esta comparación de salario ordinario.</p>
+      </details>
+      <details class="disclosure">
+        <summary>Prestaciones y salarios extra</summary>
+        <p class="block-label">Tiempo en este trabajo</p>
+        <div class="segments" id="tenure" role="group" aria-label="Tiempo en este trabajo">
+          <button type="button" data-tenure="lt1" aria-pressed="false">Menos de 1 año</button>
+          <button type="button" data-tenure="y1" aria-pressed="false">1 a menos de 3</button>
+          <button type="button" data-tenure="y3" aria-pressed="false">3 a menos de 10</button>
+          <button type="button" data-tenure="y10" aria-pressed="false">10 años o más</button>
         </div>
-      </section>
-      <section class="banner warn" id="floor" hidden>
-        <div>
-          <strong id="floor-title">Este salario queda bajo la ley.</strong>
-          <p id="floor-text"></p>
-        </div>
-      </section>
-
-      <div id="results" hidden>
-      <section class="card reveal">
-        <div class="hero">
-          <div>
-            <p class="eyebrow">Depósito mensual de ley</p>
-            <p class="amount" id="hero-net">$0.00</p>
-            <p class="caption" id="hero-sub"></p>
-          </div>
-          <div class="pills" id="pills"></div>
-          <p class="caption" id="reading"></p>
-        </div>
-
-        <div class="section-gap">
-          <h2>Bruto y neto</h2>
-          <div class="periods" id="periods"></div>
-          <p class="hint" id="period-note"></p>
-        </div>
-        <div class="section-gap">
-          <h2>Desglose del mes</h2>
-          <ul class="receipt" id="receipt"></ul>
-        </div>
-      </section>
-
-      <section class="benefits reveal" id="benefits"></section>
-
-      <div class="stack">
-        <section class="card reveal">
-          <h2>Un año con este salario</h2>
-          <ul class="receipt" id="year"></ul>
-          <p class="hint" id="year-note"></p>
-        </section>
-
-        <section class="card reveal">
-          <h2>Renta que sí hay que mirar</h2>
-          <div id="tax-copy"></div>
-        </section>
-
-        <section class="card employer reveal">
-          <h2>Lo paga la empresa, no tú</h2>
-          <p class="hint" id="employer-intro" style="margin-top:0">Estos montos no salen del depósito mensual. Sirven para ver el costo del puesto.</p>
-          <ul class="receipt" id="employer"></ul>
-        </section>
-
-        <section class="card reveal">
-          <h2>Qué más existe, y no está en tu depósito</h2>
-          <ul class="note-list" id="also"></ul>
-        </section>
+        <label class="field" id="months-wrap" hidden><span>Meses cumplidos, para aproximar el proporcional</span><input id="months" type="number" min="0" max="11" step="1" value="0" /></label>
+        <label class="field"><span>Año del escenario</span><span class="select-wrap"><select id="year-choice"><option value="2026">2026</option><option value="2027">2027 · proyección</option></select></span></label>
+        <p class="hint">2027 se proyecta con las reglas consultadas hoy; no anticipa nuevas reformas o exenciones.</p>
+        <label class="field"><span>Tipo de empleador</span><span class="select-wrap"><select id="employment"><option value="private">Empresa privada</option><option value="public">Sector público</option></select></span></label>
+        <p class="hint">El tipo de empleador ajusta la quincena 25. El aguinaldo y las vacaciones mostrados corresponden al supuesto del Código de Trabajo; en el sector público confirma el régimen aplicable.</p>
+        <label class="check" id="q25-voluntary-wrap"><input id="q25-voluntary" type="checkbox" /><span>Mi empresa confirmó la quincena 25 voluntaria de 2026.</span></label>
+        <label class="field"><span>Salarios extra al año, aparte del aguinaldo</span><input id="extra" type="number" min="0" max="12" step="0.5" value="0" /></label>
+        <p class="hint">Son cantidades brutas pactadas. Sus descuentos dependen del tratamiento legal del pago.</p>
+      </details>
+      <details class="disclosure">
+        <summary>Horas y días de referencia</summary>
+        <div class="pair">
+          <label class="field"><span>Horas al día</span><input id="hours" type="number" min="1" max="12" step="0.5" value="8" /></label>
+          <label class="field"><span>Días a la semana</span><input id="days" type="number" min="1" max="6" step="0.5" value="5" /></label>
+        </div><p class="hint" id="jornada-hint">40 horas por semana. Estas cifras sirven para las equivalencias.</p>
+      </details>
+      <div class="calculator-actions">
+        <label class="check"><input id="remember" type="checkbox" /><span>Recordar mis datos en este dispositivo</span></label>
+        <p class="hint" id="storage-note" role="status">No se guardan tus datos al salir.</p>
+        <button class="ghost" id="clear-calculator" type="button">Limpiar calculadora</button>
       </div>
+    </aside>
+    <main>
+      <section class="banner" id="banner" role="status" aria-live="polite"><div><strong id="banner-title">Empieza con el salario del contrato</strong><p id="banner-text">El depósito es opcional.</p></div></section>
+      <section class="banner warn" id="floor" hidden><div><strong id="floor-title"></strong><p id="floor-text"></p><a href="/ayuda/">Cómo consultar tu caso</a></div></section>
+      <div id="results" hidden>
+        <section class="card">
+          <div class="hero"><p class="eyebrow">Neto mensual estimado</p><p class="amount" id="hero-net">$0.00</p><p class="caption" id="hero-sub"></p></div>
+          <h2 id="chart-title">Así se reparte tu salario</h2>
+          <figure class="salary-chart" aria-labelledby="chart-title">
+            <div class="donut" id="donut" aria-hidden="true"><div class="donut-center"><strong id="net-percent"></strong><span>para ti · neto</span></div></div>
+            <ul class="chart-legend" id="chart-legend" aria-label="Montos y porcentajes del salario bruto"></ul>
+            <figcaption class="chart-note">Todo el círculo representa el bruto. Los porcentajes son efectivos sobre ese total, no las tasas legales de cada tramo. Pueden sumar 99.99% o 100.01% por redondeo.</figcaption>
+          </figure>
+          <p class="caption" id="reading"></p>
+          <h2>Desglose del mes</h2><ul class="receipt" id="receipt"></ul>
+          <Cite items={[{href:"https://www.mh.gob.sv/modificacion-a-las-tablas-de-retencion-del-impuesto-sobre-la-renta-decreto-ejecutivo-no-10/",label:"Hacienda · retenciones 2025"},{href:"https://www.crecer.com.sv/web/empresas/tasa-de-cotizacion-y-salarios/",label:"AFP Crecer · tasas y salarios"},{href:"https://www.crecer.com.sv/web/cotiza-como-independiente/",label:"AFP Crecer · mínimos por sector"}]} />
+          <a class="help-link" href="/boleto/">Aprender a leer mi boleto →</a>
+        </section>
+        <details class="card disclosure"><summary>Bruto y neto por quincena, semana, día y hora</summary><div class="periods" id="periods"></div><p class="hint" id="period-note"></p></details>
+        <details class="card disclosure"><summary>Aguinaldo, quincena 25 y vacaciones</summary><section class="benefits" id="benefits"></section><Cite items={[{href:"https://www.asamblea.gob.sv/node/13840",label:"Asamblea · quincena 25 y aplicación 2026/2027"},{href:"https://asamblea.gob.sv/taxonomy/term/1621",label:"Asamblea · disposiciones sobre aguinaldo"}]} /></details>
+        <details class="card disclosure"><summary>Un año con este salario</summary><ul class="receipt" id="year"></ul><p class="hint" id="year-note"></p></details>
+        <details class="card disclosure"><summary>¿Y la declaración de renta?</summary><div id="tax-copy"></div></details>
+        <details class="card disclosure employer"><summary>Aportes que paga la empresa</summary><ul class="receipt" id="employer"></ul></details>
+        <details class="card disclosure"><summary>Qué puede cambiar esta estimación</summary><ul class="note-list" id="also"></ul></details>
       </div>
     </main>
   </div>
-
   <script src="../scripts/calculadora.js"></script>
 </Base>

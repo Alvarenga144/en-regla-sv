@@ -21,14 +21,16 @@ Es material orientativo, personal y sin fines de lucro. No es asesoría legal, l
 | `/banco/` | Cuenta para recibir el depósito de planilla |
 | `/salario/` | Calculadora de descuentos, aguinaldo y costo para la empresa |
 | `/renta/` | Retención mensual y declaración de renta |
+| `/boleto/` | Ejemplo ficticio interactivo de comprobante de pago |
+| `/ayuda/` | Diferencias de pago, documentos y canales oficiales |
 
 ## Calculadora
 
-En `/salario/` se estima el depósito mensual a partir del salario del contrato: ISSS, AFP y renta. Aparte calcula aguinaldo, quincena 25, vacaciones y el costo anual para la empresa. Si se escribe el depósito real del mes, lo compara con esa estimación.
+En `/salario/` se estima el neto mensual y se muestra su distribución gráfica. Se puede comparar un depósito mensual o sumar las dos quincenas del mismo mes. Los resultados detallados se abren por secciones. Aguinaldo, prima vacacional y bonos se presentan en bruto, sin mezclarlos con el neto ordinario. El escenario distingue la aplicación de quincena 25 en 2026 y 2027.
 
-Lo que se escribe se queda en el navegador. El sitio no tiene backend y no envía esos datos a ningún servidor.
+Los datos se procesan en el navegador. Solo se conservan entre visitas al activar “Recordar mis datos en este dispositivo”. “Limpiar calculadora” elimina ese guardado y restablece los campos. El sitio no tiene backend para estos datos.
 
-La estimación usa las reglas vigentes hacia septiembre de 2026:
+Revisión editorial: 4 de octubre de 2026. La calculadora supone un único empleador y un mes ordinario completo; no determina obligaciones de declaración ni calcula liquidaciones o mínimos para jornadas parciales.
 
 - Retención de renta: tablas del Decreto Ejecutivo 10 de 2025.
 - ISSS del trabajador: 3 %, con tope de $1,000.
@@ -36,7 +38,7 @@ La estimación usa las reglas vigentes hacia septiembre de 2026:
 - Aguinaldo legal: 15, 19 o 21 días, según el tiempo en el trabajo.
 - Quincena 25: 50 % si el salario nominal es de $1,500 o menos.
 - Vacaciones: 15 días más 30 %.
-- Salarios mínimos del Decreto Ejecutivo 11, desde el 1 de junio de 2025: comercio, servicios e industria $408.80; maquila textil y confección $402.32; sector agrícola $305.23.
+- Referencias mensuales (decretos 11 y 12 de 2025): comercio, servicios e industria $408.80; maquila $402.32; beneficios de café y recolección de caña $305.23; agropecuario y recolección de café $272.53.
 
 ## Desarrollo
 
@@ -51,6 +53,7 @@ El servidor de desarrollo queda en `http://localhost:4321`.
 
 ```bash
 npm run build    # genera el sitio estático en dist/
+npm test         # verifica cálculo mensual, límites y comparación de depósitos
 npm run preview  # sirve esa carpeta en local
 ```
 

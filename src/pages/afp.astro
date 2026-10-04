@@ -5,16 +5,16 @@ import Cite from "../components/Cite.astro";
 
 <Base
   title="AFP"
-  description="Cómo elegir AFP en el primer trabajo en El Salvador: los 20 días de plazo, qué pasa si ya te afiliaste en la universidad y por qué el 7.25% es tu ahorro, no un impuesto."
+  description="Cómo elegir AFP en el primer trabajo en El Salvador, comprobar tu afiliación y entender los aportes al sistema de pensiones."
   eyebrow="Paso 3 · pensión"
   heading="El AFP es tuyo, aunque lo veas como descuento."
-  lede="Cada mes sale el 7.25% de tu salario completo y entra a una cuenta individual de ahorro para pensiones. La empresa aporta otro 8.75%, que no se resta de lo que te depositan. Desde 2023 ese porcentaje del trabajador no tiene tope."
+  lede="Tu cotización es el 7.25% del salario cotizable. La empresa agrega un 8.75% por su cuenta. Ambos aportes financian el sistema de pensiones; no todo el aporte conjunto va al ahorro individual."
   sources="Artículo 8 de la Ley Integral del Sistema de Pensiones: afiliación obligatoria al entrar a un trabajo, y veinte días para elegir administradora. Cotización del trabajador 7.25% y del empleador 8.75%, sin tope del trabajador desde 2023. El NUP se homologó con el DUI. Canales públicos de la Superintendencia del Sistema Financiero, AFP Crecer y AFP Confía. Consultado en septiembre de 2026."
 >
   <div class="guide">
     <section class="card reveal">
       <h2>Elegir, o que te elijan</h2>
-      <p>Ese 7.25% no es para el próximo mes. Se queda en una cuenta con tu DUI, para el retiro. Al empezar un trabajo con patrono, la afiliación es obligatoria. Tú eliges la administradora y firmas. En El Salvador las dos AFP son Crecer y Confía; las dos están supervisadas. Si sales del bachillerato y nunca oíste de esto, lo urgente no es adivinar cuál es “mejor”: es que el descuento sí entre a una cuenta tuya.</p>
+      <p>La pensión es una protección de largo plazo. Al empezar un trabajo dependiente debes estar afiliado; puedes elegir entre Crecer y Confía. Si nunca has hecho este trámite, empieza por comprobar si ya tienes afiliación y por aprender a consultar tus cotizaciones.</p>
       <p>Tienes veinte días desde el inicio del trabajo. Si ese plazo pasa y no elegiste, el patrono debe afiliarte en la AFP donde esté la mayoría de sus trabajadores. Por eso hay gente que, años después, descubre una cuenta en una administradora que nunca escogió. El empleador tiene que respetar la que tú firmaste.</p>
       <Cite items={[
         { href: "https://ssf.gob.sv/wp-content/uploads/2023/02/Ley-Integral-del-Sistema-de-Pensiones.pdf", label: "Art. 8, Ley Integral del Sistema de Pensiones" },
@@ -22,10 +22,17 @@ import Cite from "../components/Cite.astro";
     </section>
 
     <section class="card reveal">
+      <h2>¿A dónde va el aporte?</h2>
+      <p>Del 16% conjunto, 9 puntos porcentuales van a la cuenta individual, 6 a la Cuenta de Garantía Solidaria y 1 a la comisión de administración. No son descuentos adicionales sobre tu sueldo: describen la distribución de lo que aportan tú y la empresa.</p>
+      <p>Tu estado de cuenta permite revisar períodos y movimientos. Cambiar de empleo no equivale a empezar una cuenta desde cero.</p>
+      <Cite items={[{href:'https://www.confia.com.sv/ahorro-para-pensiones-1/otras-devoluciones',label:'AFP Confía · distribución de las cotizaciones'},{href:'https://ssf.gob.sv/wp-content/uploads/2023/02/Ley-Integral-del-Sistema-de-Pensiones.pdf',label:'SSF · Ley Integral del Sistema de Pensiones'}]} />
+    </section>
+
+    <section class="card reveal">
       <h2>Si ya te la ofrecieron en la universidad</h2>
       <p>Puedes afiliarte antes de tener empleo. Algunas universidades dejan que una AFP explique el sistema o recoja afiliaciones. Eso es válido, y no es un descuento de la colegiatura: la cotización empieza cuando hay una relación de trabajo.</p>
-      <p>Si ya firmaste, esa es tu AFP. No firmes otra “por si acaso” el primer día de trabajo. Dile a la empresa en cuál estás, para que el 7.25% vaya a esa cuenta y no abra una segunda.</p>
-      <p>Si no recuerdas cuál es, la Superintendencia del Sistema Financiero lo confirma con tu DUI. Su atención al usuario está en el 2699-9999 y en atencionalusuario@ssf.gob.sv. Te piden una imagen clara de las dos caras del documento.</p>
+      <p>Si ya firmaste una afiliación, confirma que está registrada y comunica a la empresa la administradora correcta. Un traslado de AFP es un trámite distinto; no necesitas hacerlo solo por empezar un empleo.</p>
+      <p>Si no recuerdas cuál es, consulta por los canales oficiales de la SSF. Confirma directamente los documentos necesarios antes de enviar información personal.</p>
       <Cite items={[
         { href: "https://asafondos.org.sv/como-saber-en-cual-afp-estoy/", label: "ASAFONDOS · cómo saber en cuál AFP estás" },
       ]} />
