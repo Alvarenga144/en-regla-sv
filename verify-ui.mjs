@@ -56,6 +56,16 @@ try {
   assert.equal(await page.locator('#deposit').inputValue(),'');
   await page.locator('#gross').fill('1500');
   await page.getByText('Comparar con lo que recibí',{exact:true}).click();
+  for (const amount of ['1208.05', '1208,05', '1,208.05', '1.208,05']) {
+    await page.locator('#deposit').fill(amount);
+    assert.equal(await page.locator('#banner-title').textContent(),'Coincide con esta estimación');
+    await page.locator('#deposit').blur();
+    assert.equal(await page.locator('#deposit').inputValue(),'1208.05');
+  }
+  await page.locator('#deposit').fill('12..05');
+  assert.equal(await page.locator('#deposit').getAttribute('aria-invalid'),'true');
+  assert.equal(await page.locator('#results').isVisible(),false);
+  await page.locator('#deposit').fill('');
   await page.locator('#pay-frequency').selectOption('fortnight');
   await page.locator('#deposit').fill('604.03');
   assert.ok((await page.locator('#banner-text').textContent()).includes('ambos depósitos'));
@@ -64,7 +74,7 @@ try {
   await page.locator('#remember').check();
   await page.reload();
   await page.waitForLoadState('networkidle');
-  assert.equal(await page.locator('#gross').inputValue(),'1500');
+  assert.equal(await page.locator('#gross').inputValue(),'1500.00');
   assert.equal(await page.locator('#pay-frequency').inputValue(),'fortnight');
   assert.equal(await page.locator('#deposit-second').inputValue(),'604.02');
   await page.getByText('Prestaciones y salarios extra',{exact:true}).click();

@@ -9,7 +9,9 @@ const sectorLabels: Record<string, string> = { comercio: 'Comercio e industria',
   <div class="layout">
     <aside class="card side">
       <p class="eyebrow">Empieza aquí</p>
-      <label class="field"><span>Salario del contrato, al mes</span><input id="gross" type="number" min="0" max="1000000" step="0.01" inputmode="decimal" placeholder="0.00" autocomplete="off" /></label>
+      <label class="field"><span>Salario del contrato, al mes</span><input id="gross" type="text" data-amount inputmode="decimal" maxlength="24" aria-describedby="amount-help gross-error" placeholder="0.00" autocomplete="off" /></label>
+      <p class="hint" id="amount-help">Importes en USD, hasta 2 decimales. Aceptamos 1208.05 o 1208,05; con miles, 1,208.05 o 1.208,05. Un separador seguido de tres cifras indica miles. Al salir del campo verás el importe con punto y dos decimales.</p>
+      <p class="hint" id="gross-error" hidden></p>
       <p class="hint">Usa el bruto de un mes completo, antes de descuentos. Para un primer mes incompleto, revisa tu boleto.</p>
       <label class="field"><span>Sector del salario mínimo</span><span class="select-wrap"><select id="sector">{Object.keys(SECTORS).map(key => <option value={key}>{sectorLabels[key]}</option>)}</select></span></label>
       <p class="hint" id="sector-hint"></p>
@@ -18,8 +20,8 @@ const sectorLabels: Record<string, string> = { comercio: 'Comercio e industria',
       <details class="disclosure">
         <summary>Comparar con lo que recibí</summary>
         <label class="field"><span>¿Cómo te pagan?</span><span class="select-wrap"><select id="pay-frequency"><option value="month">Un depósito mensual</option><option value="fortnight">Dos quincenas al mes</option></select></span></label>
-        <label class="field"><span id="deposit-label">Depósito del mes completo</span><input id="deposit" type="number" min="0" max="1000000" step="0.01" inputmode="decimal" placeholder="Opcional" autocomplete="off" /></label>
-        <label class="field" id="deposit-second-wrap" hidden><span>Segundo depósito del mismo mes</span><input id="deposit-second" type="number" min="0" max="1000000" step="0.01" inputmode="decimal" placeholder="Opcional" autocomplete="off" /></label>
+        <label class="field"><span id="deposit-label">Depósito del mes completo</span><input id="deposit" type="text" data-amount inputmode="decimal" maxlength="24" aria-describedby="amount-help deposit-error" placeholder="Opcional" autocomplete="off" /><span class="hint" id="deposit-error" hidden></span></label>
+        <label class="field" id="deposit-second-wrap" hidden><span>Segundo depósito del mismo mes</span><input id="deposit-second" type="text" data-amount inputmode="decimal" maxlength="24" aria-describedby="amount-help deposit-second-error" placeholder="Opcional" autocomplete="off" /><span class="hint" id="deposit-second-error" hidden></span></label>
         <p class="hint">No incluyas aguinaldo, bonos ni anticipos en esta comparación de salario ordinario.</p>
       </details>
       <details class="disclosure">

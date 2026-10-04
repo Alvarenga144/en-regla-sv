@@ -1,4 +1,5 @@
 import { payroll, benefits, compareDeposits, SECTORS, money } from '../lib/payroll.js';
+import { parseAmount } from '../lib/amount.js';
 
 const $ = id => document.getElementById(id);
 const KEY = 'en-regla-salario.opt-in.v1';
@@ -7,7 +8,8 @@ const format = new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD
 const fmt = value => format.format(value);
 const fields = ['gross', 'deposit', 'deposit-second', 'pay-frequency', 'months', 'hours', 'days', 'sector', 'extra', 'employment', 'year-choice'];
 let tenure = null;
-const num = id => Number($(id).value);
+const amounts = ['gross', 'deposit', 'deposit-second'];
+const num = id => amounts.includes(id) ? parseAmount($(id).value).value : Number($(id).value);
 const text = (id, value) => { $(id).textContent = value; };
 const item = (label, value, note = '') => '<li><div>' + label + '<small>' + note + '</small></div><strong>' + fmt(value) + '</strong></li>';
 
@@ -46,14 +48,22 @@ function render() {
   const sector = SECTORS[$('sector').value] || SECTORS.comercio;
   text('sector-hint', sector.name + ': ' + fmt(sector.monthly) + ' al mes de referencia; ' + sector.hourly.toFixed(3) + ' USD por hora ordinaria.');
   text('storage-note', $('remember').checked ? 'Tus datos se recuerdan únicamente en este navegador.' : 'No se guardan tus datos al salir.');
-  const invalid = [...document.querySelectorAll('input[type="number"]')].find(input => !input.closest('[hidden]') && !input.validity.valid);
+  for (const id of amounts) {
+    const input = $(id);
+    const { error } = parseAmount(input.value);
+    input.setCustomValidity(error);
+    input.setAttribute('aria-invalid', String(Boolean(error)));
+    text(id + '-error', error);
+    $(id + '-error').hidden = !error;
+  }
+  const invalid = [...document.querySelectorAll('input[type="number"], input[data-amount]')].find(input => !input.closest('[hidden]') && !input.validity.valid);
   save();
   $('results').hidden = Boolean(invalid) || !(num('gross') > 0);
   $('banner').className = 'banner';
   $('floor').hidden = true;
   if ($('results').hidden) {
     text('banner-title', invalid ? 'Revisa el dato ingresado' : 'Empieza con el salario del contrato');
-    text('banner-text', invalid ? 'Usa cantidades positivas y respeta los límites indicados en los campos.' : 'Escribe el bruto mensual o usa el mínimo del sector. El depósito es opcional.');
+    text('banner-text', invalid ? invalid.validationMessage : 'Escribe el bruto mensual o usa el mínimo del sector. El depósito es opcional.');
     return;
   }
   const c = payroll(num('gross'));
@@ -120,6 +130,11 @@ try {
   }
 } catch { /* Remains usable when storage is unavailable or malformed. */ }
 document.querySelectorAll('input, select').forEach(input => input.addEventListener('input', render));
+amounts.forEach(id => $(id).addEventListener('blur', () => {
+  const parsed = parseAmount($(id).value);
+  if (!parsed.error && parsed.value !== null) $(id).value = parsed.value.toFixed(2);
+  render();
+}));
 document.querySelectorAll('[data-tenure]').forEach(button => button.addEventListener('click', () => { setTenure(button.dataset.tenure); render(); }));
 $('min-wage').addEventListener('click', () => { $('gross').value = SECTORS[$('sector').value].monthly; render(); });
 $('clear-calculator').addEventListener('click', () => { defaults(); render(); $('gross').focus(); });

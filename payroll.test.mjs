@@ -1,5 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { parseAmount } from './src/lib/amount.js';
+
+test('Money accepts both decimal conventions without losing cents', () => {
+  for (const input of ['1208.05', '1208,05', '1,208.05', '1.208,05', ' 1208.05 ']) assert.equal(parseAmount(input).value, 1208.05);
+  for (const input of ['1500', '1,500', '1.500']) assert.equal(parseAmount(input).value, 1500);
+  assert.equal(parseAmount('0,01').value, .01);
+  assert.equal(parseAmount('').value, null);
+  for (const input of ['-1', '1e3', 'Infinity', '12.3456', '1,20.05', '1208.', '1000001', 'abc']) assert.ok(parseAmount(input).error, input);
+});
 import { payroll, benefits, compareDeposits, isrMonthly, money, SECTORS } from './src/lib/payroll.js';
 
 test('Known monthly payslip: 1500 gross and 1208.05 net', () => {
