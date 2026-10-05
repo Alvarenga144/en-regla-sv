@@ -1,10 +1,10 @@
 // Check generated HTML, not template strings. Run the build before these tests.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile, stat } from 'node:fs/promises';
+import { readFile, readdir, stat } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
-const origin = 'https://enreglasv.com';
+const origin = 'https://en-regla-sv.vercel.app';
 const routes = ['/', '/contrato/', '/isss/', '/afp/', '/banco/', '/salario/', '/renta/', '/boleto/', '/ayuda/'];
 const decode = value => value.replaceAll('&amp;', '&').replaceAll('&quot;', '"').replaceAll('&#39;', "'");
 const attribute = (tag, key) => decode(tag.match(new RegExp(`\\b${key}="([^"]*)"`))?.[1] ?? '');
@@ -33,11 +33,42 @@ test('All pages have unique search metadata, canonical URLs and one main landmar
     assert.equal(canonicals.length, 1, route);
     assert.equal(attribute(canonicals[0], 'href'), origin + route);
     assert.equal(meta(html, 'og:url'), origin + route);
+    assert.equal(meta(html, 'og:locale'), 'es_SV');
+    assert.equal(meta(html, 'og:site_name'), 'En regla');
     assert.ok(meta(html, 'robots').startsWith('index, follow'));
     assert.ok(meta(html, 'robots').includes('max-image-preview:large'));
   }
   assert.equal(titles.size, routes.length);
   assert.equal(descriptions.size, routes.length);
+});
+
+test('Internal links, section anchors and WhatsApp shares point to existing canonical pages', () => {
+  const byRoute = new Map(pages.map(page => [page.route, page.html]));
+  for (const { route, html } of pages) {
+    for (const tag of html.match(/<a\b[^>]*>/g) ?? []) {
+      const href = attribute(tag, 'href');
+      const url = new URL(href, origin + route);
+      if (url.hostname === 'wa.me') {
+        assert.ok(url.searchParams.get('text').includes(origin + route), route);
+      }
+      if (url.origin !== origin) continue;
+      assert.ok(byRoute.has(url.pathname), `${route}: missing page ${href}`);
+      if (url.hash) {
+        const ids = [...byRoute.get(url.pathname).matchAll(/\bid="([^"]+)"/g)].map(match => attribute(match[0], 'id'));
+        assert.ok(ids.includes(decodeURIComponent(url.hash.slice(1))), `${route}: missing section ${href}`);
+      }
+    }
+  }
+});
+
+test('Generated SEO assets contain no retired domain and hosting uses canonical trailing slashes', async () => {
+  const files = [...routes.map(route => '.' + route + 'index.html'), '404.html', 'robots.txt',
+    ...(await readdir('dist')).filter(file => /^sitemap.*\.xml$/.test(file))];
+  for (const file of files) {
+    assert.ok(!(await readFile(resolve('dist', file), 'utf8')).includes('enreglasv.com'), file);
+  }
+  const hosting = JSON.parse(await readFile('vercel.json', 'utf8'));
+  assert.equal(hosting.trailingSlash, true);
 });
 
 test('Social previews use the same accessible, optimized JPEG on every page', async () => {

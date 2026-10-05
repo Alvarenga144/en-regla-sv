@@ -2,7 +2,7 @@
 
 Guía y calculadora para empezar a trabajar en regla en El Salvador. Está pensada para quien sale del bachillerato o de la universidad y entra a su primer empleo formal: qué se firma, qué se tramita, qué le descuentan del salario y cuándo toca mirar la renta.
 
-Sitio: [enreglasv.com](https://enreglasv.com)
+Sitio publicado en Vercel: [en-regla-sv.vercel.app](https://en-regla-sv.vercel.app/). Por ahora, este es el dominio público del proyecto; aún no hay un dominio personalizado.
 
 Si este repositorio te sirve, una estrella ayuda a que otros lo encuentren.
 
@@ -57,7 +57,7 @@ npm test         # verifica cálculo mensual, límites y comparación de depósi
 npm run preview  # sirve esa carpeta en local
 ```
 
-La URL canónica (`https://enreglasv.com`) está en `astro.config.mjs`. Ahí también se genera el sitemap.
+La URL canónica (`https://en-regla-sv.vercel.app`) está en `astro.config.mjs`. Ahí también se genera el sitemap. Esta base se usa para canonical, Open Graph, Twitter Card, datos estructurados, enlaces para compartir y la URL del sitemap en robots.txt. Si cambia el dominio público, actualiza esta configuración y el origen esperado en `seo.test.mjs`, vuelve a compilar y despliega el sitio.
 
 ## SEO y vistas previas al compartir
 
@@ -69,6 +69,8 @@ Las guías y la explicación de la calculadora se entregan como HTML estático, 
 
 La página de error `404.html` está marcada `noindex` y queda fuera del sitemap. El proveedor de hosting debe servirla con estado HTTP 404 para rutas inexistentes, sin convertirlas en páginas de inicio con estado 200.
 
+`vercel.json` mantiene la barra final de las rutas, igual que Astro, los enlaces canónicos y el sitemap. Vercel redirige las variantes sin barra con HTTP 308; los archivos como `robots.txt`, el sitemap y las imágenes conservan su URL sin barra final.
+
 Verificación antes de publicar:
 
 ```bash
@@ -77,11 +79,11 @@ npm test
 npm run test:seo
 ```
 
-Las pruebas de SEO inspeccionan las nueve páginas generadas, su metadata, entidades, referencias internas, sitemap, robots, página de error y archivo de imagen. `verify-ui.mjs` comprueba navegación, tamaños de pantalla, recursos sociales y funcionamiento de los inputs y cálculos con Playwright.
+Las pruebas de SEO inspeccionan las nueve páginas generadas, su metadata, entidades, enlaces y anclas internos, URLs para compartir, sitemap, robots, página de error y archivo de imagen. También detectan referencias al dominio anterior y comprueban la configuración de rutas de Vercel. `verify-ui.mjs` comprueba navegación, tamaños de pantalla, recursos sociales y funcionamiento de los inputs y cálculos con Playwright.
 
 Después de desplegar:
 
-- Verifica el dominio en Google Search Console y Bing Webmaster Tools y envía `https://enreglasv.com/sitemap-index.xml`. La verificación requiere acceso a esas cuentas o al DNS; no se configura con identificadores ficticios.
+- Verifica el dominio en Google Search Console y Bing Webmaster Tools y envía `https://en-regla-sv.vercel.app/sitemap-index.xml`. La verificación requiere acceso a esas cuentas o al DNS; no se configura con identificadores ficticios.
 - Inspecciona la portada y la calculadora con las herramientas de URLs y resultados enriquecidos. Comprueba que páginas, estilos e imagen sean públicos y no estén bloqueados por el hosting, CDN o protección contra bots.
 - Comprueba la vista previa con Meta Sharing Debugger y al compartir un enlace real en WhatsApp y X. Estas plataformas pueden conservar previews anteriores en caché.
 - Revisa clics e impresiones para ajustar títulos y contenido a búsquedas reales. Mantén las fuentes y fechas editoriales cuando cambien las reglas; no actualices fechas solo para aparentar contenido reciente.
