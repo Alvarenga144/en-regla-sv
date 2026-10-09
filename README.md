@@ -107,6 +107,10 @@ src/
 - [Astro](https://astro.build/) 7
 - [@astrojs/sitemap](https://docs.astro.build/en/guides/integrations-guide/sitemap/)
 
+## ¿Quieres aportar?
+
+Si ves un dato desactualizado, algo confuso o una mejora posible, las contribuciones son bienvenidas. Abre un [issue](https://github.com/Alvarenga144/en-regla-sv/issues) o envía un pull request; cada cambio se revisa antes de publicarse. Lee la [guía de contribución](CONTRIBUTING.md) para empezar.
+
 ## Licencia
 
 [MIT](LICENSE). Copyright © 2026 [Esteban Alvarenga](https://estebanalvarenga.com).
