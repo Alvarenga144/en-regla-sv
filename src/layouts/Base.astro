@@ -1,4 +1,5 @@
 ---
+import Analytics from '@vercel/analytics/astro';
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import GuideActions from "../components/GuideActions.astro";
@@ -66,6 +67,7 @@ const structuredData = {
 <!DOCTYPE html>
 <html lang="es-SV" prefix="og: https://ogp.me/ns#">
   <head>
+    <Analytics />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{seoTitle}</title>
