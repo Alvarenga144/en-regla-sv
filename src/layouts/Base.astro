@@ -10,8 +10,9 @@ import { getImage } from "astro:assets";
 import banner from "../assets/banner-preview.png";
 import "../styles/global.css";
 
-const { title, description, eyebrow, heading, lede, sources, noindex = false } = Astro.props;
+const { title, description, eyebrow, heading, lede, sources, noindex = false, rotatingHeading = [] } = Astro.props;
 const path = Astro.url.pathname;
+const rotateHome = path === "/" && rotatingHeading[0] === heading && rotatingHeading.length > 1;
 const reading = ["/contrato/", "/isss/", "/afp/", "/banco/", "/renta/", "/boleto/", "/ayuda/"].includes(path);
 const canonical = new URL(path, Astro.site);
 const home = new URL('/', Astro.site).href;
@@ -120,7 +121,12 @@ const structuredData = {
         <header class="top reveal" id="contenido" tabindex="-1">
           <div>
             <p class="eyebrow">{eyebrow}</p>
-            <h1>{heading}</h1>
+            {rotateHome ? (
+              <h1 class="hero-title">
+                <span class="sr-only">{heading}</span>
+                <span class="hero-line" aria-hidden="true" data-phrases={JSON.stringify(rotatingHeading)}>{heading}</span>
+              </h1>
+            ) : <h1>{heading}</h1>}
             <p class="lede">{lede}</p>
             {reading && (
               <p class="as-of">Revisión editorial: <time datetime="2026-10-04">4 de octubre de 2026</time>. Consulta las fuentes junto a cada tema; las condiciones dependen de tu caso y del período.</p>
@@ -182,6 +188,61 @@ const structuredData = {
         if (location.hash.length > 1) {
           window.setTimeout(() => flash(location.hash.slice(1)), 120);
         }
+      })();
+    </script>
+    <script is:inline>
+      (function () {
+        const line = document.querySelector(".hero-line");
+        const phrases = line ? JSON.parse(line.dataset.phrases || "[]") : [];
+        const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (!line || reduce || phrases.length < 2) return;
+
+        const column = line.parentElement.parentElement;
+        let lastWidth = -1;
+        const measure = () => {
+          const width = column.clientWidth;
+          if (!width || width === lastWidth) return;
+          lastWidth = width;
+          const probe = document.createElement("span");
+          probe.setAttribute("aria-hidden", "true");
+          probe.style.cssText = "display:block;position:absolute;visibility:hidden;top:0;left:0;height:auto;pointer-events:none;width:" + width + "px;";
+          line.parentElement.appendChild(probe);
+          let tallest = 0;
+          for (const phrase of phrases) {
+            probe.textContent = phrase;
+            tallest = Math.max(tallest, probe.offsetHeight);
+          }
+          probe.remove();
+          line.style.minHeight = tallest + "px";
+        };
+
+        let index = 0;
+        let timer = 0;
+        const fade = 400;
+        const hold = 4000;
+        const showNext = () => {
+          line.classList.add("is-leaving");
+          window.setTimeout(() => {
+            index = (index + 1) % phrases.length;
+            line.textContent = phrases[index];
+            line.classList.remove("is-leaving");
+            line.classList.add("is-arriving");
+            requestAnimationFrame(() => requestAnimationFrame(() => line.classList.remove("is-arriving")));
+            schedule();
+          }, fade);
+        };
+        const schedule = () => {
+          window.clearTimeout(timer);
+          timer = window.setTimeout(() => {
+            if (document.hidden) schedule();
+            else showNext();
+          }, hold);
+        };
+
+        measure();
+        document.fonts?.ready.then(() => { lastWidth = -1; measure(); });
+        new ResizeObserver(() => { lastWidth = -1; measure(); }).observe(column);
+        schedule();
       })();
     </script>
   </body>
