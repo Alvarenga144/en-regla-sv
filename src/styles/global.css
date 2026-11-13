@@ -513,6 +513,7 @@ input[type="number"]:focus,
 }
 
 .calculator-inputs .pair { gap: 12px; }
+.calculator-inputs .jornada-hours { grid-template-columns: 1fr; }
 .calculator-inputs .segments { gap: 10px; }
 .calculator-inputs .segments button { min-height: 48px; border-color: var(--line); }
 .calculator-inputs .segments button:hover { border-color: rgba(92, 77, 134, .45); }

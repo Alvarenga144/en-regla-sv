@@ -6,10 +6,26 @@ const KEY = 'en-regla-salario.opt-in.v1';
 const OLD_KEYS = ['calculadora-salario-sv', 'en-regla-salario', 'en-regla-salario.v2', 'en-regla-salario.v3'];
 const format = new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD'});
 const fmt = value => format.format(value);
-const fields = ['gross', 'deposit', 'deposit-second', 'pay-frequency', 'months', 'hours', 'days', 'sector', 'extra', 'employment', 'year-choice'];
+const fields = ['gross', 'deposit', 'deposit-second', 'pay-frequency', 'months', 'hours', 'saturday', 'sector', 'extra', 'employment', 'year-choice'];
 let tenure = null;
 const amounts = ['gross', 'deposit', 'deposit-second'];
 const num = id => amounts.includes(id) ? parseAmount($(id).value).value : Number($(id).value);
+const hoursOf = (id, fallback) => {
+  const raw = $(id).value;
+  if (raw === '') return fallback;
+  const value = Number(raw);
+  return Number.isFinite(value) ? value : fallback;
+};
+const formatHours = value => {
+  const rounded = Math.round((value + Number.EPSILON) * 10) / 10;
+  return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
+};
+const jornadaHint = (weekday, saturday) => {
+  const total = formatHours(weekday * 5 + saturday);
+  const week = formatHours(weekday) + ' horas de lunes a viernes';
+  const rest = saturday > 0 ? ' y ' + formatHours(saturday) + ' el sábado' : '; el sábado no se suma';
+  return total + ' horas por semana: ' + week + rest + '. Esta cuenta no cambia el neto ni calcula horas extra.';
+};
 const text = (id, value) => { $(id).textContent = value; };
 const item = (label, value, note = '') => '<li><div>' + label + '<small>' + note + '</small></div><strong>' + fmt(value) + '</strong></li>';
 
@@ -78,9 +94,9 @@ function render() {
     text('banner-text', 'Comparaste ' + fmt(total) + ' con ' + fmt(c.net) + ' estimados. Revisa el boleto para explicar diferencias. Coincidir no confirma que ISSS y AFP estén pagados.');
     if (Math.abs(difference) >= .02) $('banner').classList.add(difference < 0 ? 'short' : 'over');
   }
-  const hours = num('hours') || 8;
-  const days = num('days') || 5;
-  const partial = hours <= 5 || days < 5;
+  const hours = hoursOf('hours', 8);
+  const saturday = hoursOf('saturday', 0);
+  const partial = hours <= 5;
   if (partial || c.gross < sector.monthly) {
     $('floor').hidden = false;
     text('floor-title', partial ? 'Tu jornada necesita una revisión particular' : 'El monto está bajo la referencia mensual');
@@ -92,8 +108,8 @@ function render() {
   chart(c);
   $('receipt').innerHTML = item('Salario bruto', c.gross, 'Mes ordinario completo.') + item('ISSS', -c.isss, '3% hasta una base de $1,000.') + item('AFP', -c.afp, '7.25% del salario cotizable.') + item('Renta', -c.tax, 'Base tras ISSS y AFP: ' + fmt(c.base) + '.' + (c.deduction ? ' Se considera la deducción fija para el supuesto de ingreso anual de hasta $9,100.' : '')) + item('Neto estimado', c.net);
   $('periods').innerHTML = [['Mes', 1], ['Quincena promedio', .5], ['Semana promedio', 12 / 52], ['Día de referencia', 1 / 30], ['Hora de referencia', 1 / 30 / hours]].map(([label, scale]) => '<div class="period"><span class="k">' + label + '</span><div class="b">Bruto <b>' + fmt(c.gross * scale) + '</b></div><div class="n">Neto <b>' + fmt(c.net * scale) + '</b></div></div>').join('');
-  text('period-note', 'Semana: mes × 12 ÷ 52. Día: mes ÷ 30. Hora: día ÷ horas ingresadas. Son equivalencias; las dos quincenas reales pueden diferir por retenciones y redondeos.');
-  text('jornada-hint', hours * days + ' horas por semana. No calculamos horas extra ni recargos nocturnos.');
+  text('period-note', 'Semana: mes × 12 ÷ 52. Día: mes ÷ 30. Hora: día ÷ horas de lunes a viernes. El sábado suma al total de la semana y no cambia el neto.');
+  text('jornada-hint', jornadaHint(hours, saturday));
   const q25 = !private2026 || $('q25-voluntary').checked;
   const b = benefits(c.gross, tenure, num('months'), q25);
   $('benefits').classList.toggle('waiting', !b.known);
@@ -111,7 +127,7 @@ function render() {
   $('also').innerHTML = '<li>El aguinaldo y la prima vacacional son prestaciones; no son descuentos de tu salario ordinario.</li><li>Los bonos, comisiones y horas extra pueden cambiar la base de cotización y la renta del período.</li><li>Los recálculos de renta y un primer mes incompleto pueden explicar diferencias.</li><li>Para confirmar cotizaciones pagadas, consulta al ISSS y tu AFP, además del boleto.</li><li><a href="/boleto/">Mira un boleto explicado</a> o <a href="/ayuda/">revisa qué hacer si algo no cuadra</a>.</li>';
 }
 function defaults() {
-  const values = {gross: '', deposit: '', 'deposit-second': '', 'pay-frequency': 'month', months: '0', hours: '8', days: '5', sector: 'comercio', extra: '0', employment: 'private', 'year-choice': '2026'};
+  const values = {gross: '', deposit: '', 'deposit-second': '', 'pay-frequency': 'month', months: '0', hours: '8', saturday: '0', sector: 'comercio', extra: '0', employment: 'private', 'year-choice': '2026'};
   fields.forEach(id => { $(id).value = values[id]; });
   $('remember').checked = false;
   $('q25-voluntary').checked = false;
