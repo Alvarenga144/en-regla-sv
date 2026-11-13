@@ -20,6 +20,10 @@
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
     "@vercel/analytics": "^2.0.1",
+<<<<<<< HEAD
     "astro": "^7.3.5"
+=======
+    "astro": "^7.4.10"
+>>>>>>> 4054afd89725e92323ff57ad462723b1541a607a
   }
 }
