@@ -6,14 +6,23 @@ export const site = {
   github: "https://github.com/Alvarenga144/en-regla-sv",
 };
 
-export const nav = [
-  { href: "/", label: "Inicio" },
-  { href: "/contrato/", label: "Contrato" },
-  { href: "/isss/", label: "Seguro social" },
-  { href: "/afp/", label: "AFP" },
-  { href: "/banco/", label: "Cuenta de banco" },
-  { href: "/salario/", label: "Tu salario" },
-  { href: "/renta/", label: "Renta" },
-  { href: "/boleto/", label: "Tu boleto" },
-  { href: "/ayuda/", label: "Algo no cuadra" },
+export type NavTone = "sky" | "peach" | "rose" | "sage" | "mint" | "lilac" | "butter" | "sand" | "mauve";
+
+export type NavItem = {
+  href: string;
+  label: string;
+  tone: NavTone;
+  featured?: boolean;
+};
+
+export const nav: NavItem[] = [
+  { href: "/", label: "Inicio", tone: "sky" },
+  { href: "/contrato/", label: "Contrato", tone: "peach" },
+  { href: "/isss/", label: "Seguro social", tone: "rose" },
+  { href: "/afp/", label: "AFP", tone: "sage" },
+  { href: "/banco/", label: "Cuenta de banco", tone: "mint" },
+  { href: "/salario/", label: "Tu salario", tone: "lilac", featured: true },
+  { href: "/renta/", label: "Renta", tone: "butter" },
+  { href: "/boleto/", label: "Tu boleto", tone: "sand" },
+  { href: "/ayuda/", label: "Algo no cuadra", tone: "mauve" },
 ];
